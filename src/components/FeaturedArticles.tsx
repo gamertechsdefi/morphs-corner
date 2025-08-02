@@ -93,10 +93,10 @@ export default function FeaturedArticles() {
           <div className="w-16 h-1 bg-green-500 mx-auto mb-8"></div>
           <p className="text-gray-600 mb-8">No articles published yet. Check back soon!</p>
           <Link
-            href="/post-article"
+            href="/articles"
             className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
-            Write First Article
+            View Articles
             <FiArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -147,8 +147,8 @@ export default function FeaturedArticles() {
 
                 {/* Title */}
                 <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                  <Link 
-                    href={`/article/${article.id}`}
+                  <Link
+                    href={`/articles/${article.id}`}
                     className="hover:text-green-600 transition-colors"
                   >
                     {article.title}

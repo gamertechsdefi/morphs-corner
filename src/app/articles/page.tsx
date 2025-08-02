@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { FiSearch, FiFilter, FiCalendar, FiUser, FiEye, FiHeart, FiTag, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiCalendar, FiUser, FiEye, FiHeart, FiTag, FiChevronLeft, FiChevronRight, FiPlus } from 'react-icons/fi';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Article {
   id: string;
@@ -32,6 +33,7 @@ interface PaginationInfo {
 
 export default function ArticlesPage() {
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -167,6 +169,27 @@ export default function ArticlesPage() {
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div></div>
+              {user && (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/articles/my-articles"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    My Articles
+                  </Link>
+                  <Link
+                    href="/articles/create"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <FiPlus className="w-4 h-4" />
+                    Create Article
+                  </Link>
+                </div>
+              )}
+            </div>
+
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Latest Articles
             </h1>
@@ -290,8 +313,8 @@ export default function ArticlesPage() {
 
                     {/* Title */}
                     <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                      <Link 
-                        href={`/article/${article.id}`}
+                      <Link
+                        href={`/articles/${article.id}`}
                         className="hover:text-green-600 transition-colors"
                       >
                         {article.title}
