@@ -50,7 +50,7 @@ export class PointsService {
   }
 
   // Check if user can claim daily points
-  async canClaimDailyPoints(userId: string): Promise<boolean> {
+  async canClaimDailyPoints(): Promise<boolean> {
     try {
       const response = await fetch('/api/points/user-points');
 
@@ -68,7 +68,7 @@ export class PointsService {
   }
 
   // Claim daily points
-  async claimDailyPoints(userId: string): Promise<{ success: boolean; points?: number; error?: string }> {
+  async claimDailyPoints(): Promise<{ success: boolean; points?: number; error?: string }> {
     try {
       const response = await fetch('/api/points/claim-daily', {
         method: 'POST',
@@ -81,7 +81,7 @@ export class PointsService {
       }
 
       return { success: true, points: data.points };
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error occurred' };
     }
   }
@@ -191,7 +191,7 @@ export class PointsService {
 
   // Complete a daily task
   async completeTask(
-    userId: string,
+    _userId: string,
     taskType: string,
     points: number
   ): Promise<{ success: boolean; error?: string }> {
@@ -211,13 +211,13 @@ export class PointsService {
       }
 
       return { success: true };
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error occurred' };
     }
   }
 
   // Get time until next daily claim
-  async getTimeUntilNextClaim(userId: string): Promise<string> {
+  async getTimeUntilNextClaim(): Promise<string> {
     try {
       const response = await fetch('/api/points/user-points');
 

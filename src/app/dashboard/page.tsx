@@ -5,23 +5,9 @@ import { useRouter } from 'next/navigation';
 import Header from "@/components/Header";
 import { useAuth } from '@/contexts/AuthContext';
 import { pointsService } from '@/services/pointsService';
-import { FiUser, FiMail, FiCalendar, FiTrendingUp, FiGift, FiClock, FiCheck, FiStar, FiLogOut, FiSettings, FiEdit3 } from 'react-icons/fi';
+import { FiUser, FiMail, FiCalendar, FiTrendingUp, FiGift, FiClock, FiLogOut, FiSettings, FiEdit3 } from 'react-icons/fi';
 import type { UserPoints } from '@/lib/supabase';
 import Footer from '@/components/Footer';
-
-// Mock user data - replace with actual user data from your auth system
-const mockUser = {
-  id: 1,
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  avatar: '/api/placeholder/100/100',
-  joinDate: '2024-01-15',
-  totalPoints: 2450,
-  dailyStreak: 7,
-  level: 'Gold Member',
-  articlesRead: 45,
-  lastLogin: new Date().toISOString(),
-};
 
 // Mock daily tasks
 const dailyTasks = [
@@ -77,11 +63,11 @@ export default function Dashboard() {
         }
 
         // Check claim status
-        const canClaimDaily = await pointsService.canClaimDailyPoints(user.id);
+        const canClaimDaily = await pointsService.canClaimDailyPoints();
         setCanClaim(canClaimDaily);
 
         if (!canClaimDaily) {
-          const timeLeft = await pointsService.getTimeUntilNextClaim(user.id);
+          const timeLeft = await pointsService.getTimeUntilNextClaim();
           setTimeUntilNextClaim(timeLeft);
         }
 
@@ -100,11 +86,11 @@ export default function Dashboard() {
     if (!user) return;
 
     const interval = setInterval(async () => {
-      const canClaimDaily = await pointsService.canClaimDailyPoints(user.id);
+      const canClaimDaily = await pointsService.canClaimDailyPoints();
       setCanClaim(canClaimDaily);
 
       if (!canClaimDaily) {
-        const timeLeft = await pointsService.getTimeUntilNextClaim(user.id);
+        const timeLeft = await pointsService.getTimeUntilNextClaim();
         setTimeUntilNextClaim(timeLeft);
       }
     }, 60000); // Check every minute
@@ -116,7 +102,7 @@ export default function Dashboard() {
     if (!canClaim || !user) return;
 
     try {
-      const result = await pointsService.claimDailyPoints(user.id);
+      const result = await pointsService.claimDailyPoints();
 
       if (result.success) {
         // Refresh user points
@@ -136,38 +122,38 @@ export default function Dashboard() {
     }
   };
 
-  const completeTask = async (taskId: number) => {
-    if (!user) return;
+  // const completeTask = async (taskId: number) => {
+  //   if (!user) return;
 
-    const task = tasks.find(t => t.id === taskId);
-    if (!task) return;
+  //   const task = tasks.find(t => t.id === taskId);
+  //   if (!task) return;
 
-    try {
-      const result = await pointsService.completeTask(user.id, task.title, task.points);
+  //   try {
+  //     const result = await pointsService.completeTask(user.id, task.title, task.points);
 
-      if (result.success) {
-        // Update local task state
-        setTasks(prev => prev.map(t =>
-          t.id === taskId
-            ? { ...t, completed: true }
-            : t
-        ));
+  //     if (result.success) {
+  //       // Update local task state
+  //       setTasks(prev => prev.map(t =>
+  //         t.id === taskId
+  //           ? { ...t, completed: true }
+  //           : t
+  //       ));
 
-        // Refresh user points
-        const updatedPoints = await pointsService.getUserPoints();
-        if (updatedPoints) {
-          setUserPoints(updatedPoints);
-        }
+  //       // Refresh user points
+  //       const updatedPoints = await pointsService.getUserPoints();
+  //       if (updatedPoints) {
+  //         setUserPoints(updatedPoints);
+  //       }
 
-        alert(`Task completed! +${task.points} points`);
-      } else {
-        alert('Failed to complete task. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error completing task:', error);
-      alert('An error occurred while completing the task.');
-    }
-  };
+  //       alert(`Task completed! +${task.points} points`);
+  //     } else {
+  //       alert('Failed to complete task. Please try again.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error completing task:', error);
+  //     alert('An error occurred while completing the task.');
+  //   }
+  // };
 
   const handleSignOut = async () => {
     if (confirm('Are you sure you want to sign out?')) {
@@ -176,8 +162,8 @@ export default function Dashboard() {
     }
   };
 
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const totalTaskPoints = tasks.reduce((sum, task) => task.completed ? sum + task.points : sum, 0);
+  // const completedTasks = tasks.filter(task => task.completed).length;
+  // const totalTaskPoints = tasks.reduce((sum, task) => task.completed ? sum + task.points : sum, 0);
 
   // Show loading state
   if (authLoading || loading) {

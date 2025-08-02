@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -31,7 +31,8 @@ interface PaginationInfo {
   totalPages: number;
 }
 
-export default function ArticlesPage() {
+// Articles content component that uses useSearchParams
+function ArticlesContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
@@ -465,5 +466,49 @@ export default function ArticlesPage() {
 
       <Footer />
     </div>
+  );
+}
+
+// Loading component for Suspense fallback
+function ArticlesLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <main className="px-4 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Page Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div></div>
+            </div>
+
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Latest Articles
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover insights, tutorials, and analysis from our team of Web3 experts
+            </p>
+          </div>
+
+          {/* Loading State */}
+          <div className="flex items-center justify-center min-h-[40vh]">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading articles...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+// Main export component with Suspense boundary
+export default function ArticlesPage() {
+  return (
+    <Suspense fallback={<ArticlesLoading />}>
+      <ArticlesContent />
+    </Suspense>
   );
 }

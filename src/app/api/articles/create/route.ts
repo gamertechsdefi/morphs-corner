@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 
       article = result.data;
       error = result.error;
-    } catch (insertError) {
+    } catch {
       // If html_content column doesn't exist, try without it
       console.log('Trying without html_content column...');
       const result = await supabase
