@@ -1,5 +1,5 @@
 import { createSupabaseClient } from '@/lib/supabase';
-import type { UserPoints, DailyTask, PointTransaction } from '@/lib/supabase';
+import type {  DailyTask, PointTransaction } from '@/lib/supabase';
 
 export class PointsService {
   private supabase = createSupabaseClient();

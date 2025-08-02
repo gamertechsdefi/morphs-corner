@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiGift, FiClock, FiTrendingUp, FiStar } from 'react-icons/fi';
+import { FiGift, FiClock, FiStar } from 'react-icons/fi';
 
 interface PointsSystemProps {
   userId?: string;
@@ -104,21 +104,21 @@ export default function PointsSystem({ userId = 'default', onPointsUpdate }: Poi
   };
 
   // Add points for activities
-  const addActivityPoints = (points: number, activity: string) => {
-    const newTotalPoints = userPoints.totalPoints + points;
-    const newLevel = calculateLevel(newTotalPoints);
+  // const addActivityPoints = (points: number, activity: string) => {
+  //   const newTotalPoints = userPoints.totalPoints + points;
+  //   const newLevel = calculateLevel(newTotalPoints);
     
-    const updatedPoints: UserPoints = {
-      ...userPoints,
-      totalPoints: newTotalPoints,
-      level: newLevel
-    };
+  //   const updatedPoints: UserPoints = {
+  //     ...userPoints,
+  //     totalPoints: newTotalPoints,
+  //     level: newLevel
+  //   };
     
-    saveUserPoints(updatedPoints);
+  //   saveUserPoints(updatedPoints);
     
-    // Show notification (you can replace with a toast)
-    console.log(`+${points} points for ${activity}!`);
-  };
+  //   // Show notification (you can replace with a toast)
+  //   console.log(`+${points} points for ${activity}!`);
+  // };
 
   const getStreakBonus = () => {
     return userPoints.dailyStreak * 5;

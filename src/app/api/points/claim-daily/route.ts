@@ -11,7 +11,7 @@ function calculateLevel(points: number): string {
   return 'Bronze';
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = createRouteHandlerClient({ cookies });
 

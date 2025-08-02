@@ -83,7 +83,7 @@ export default function Header() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
     const pathname = usePathname();
     const mobileMenuRef = useRef<HTMLDivElement>(null);
 

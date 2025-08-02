@@ -250,7 +250,7 @@ export default function MyArticlesPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No articles yet</h3>
               <p className="text-gray-600 mb-6">
-                You haven't published any articles yet. Start sharing your knowledge with the community!
+                You haven&apos;t published any articles yet. Start sharing your knowledge with the community!
               </p>
               <Link
                 href="/articles/create"
