@@ -4,10 +4,13 @@ import { cookies } from 'next/headers';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: unknown
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies: cookies });
+    // Type the context parameters within the function
+    const params = (context as { params: { id: string } }).params;
+
+    const supabase = createRouteHandlerClient({ cookies });
 
     // Check if user is authenticated
     const { data: { session } } = await supabase.auth.getSession();
@@ -53,10 +56,13 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: unknown
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies: cookies });
+    // Type the context parameters within the function
+    const params = (context as { params: { id: string } }).params;
+
+    const supabase = createRouteHandlerClient({ cookies });
 
     // Check if user is authenticated
     const { data: { session } } = await supabase.auth.getSession();
