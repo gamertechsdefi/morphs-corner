@@ -1,0 +1,86 @@
+[
+  {
+    "id": "video-01",
+    "title": "Cryptocurrency Basics Explained",
+    "description": "A comprehensive guide to understanding cryptocurrency fundamentals",
+    "url": "/videos/01.mov",
+    "category": "Education"
+  },
+  {
+    "id": "video-02",
+    "title": "DeFi Yield Farming Complete Guide",
+    "description": "Learn how to maximize your returns through DeFi yield farming strategies",
+    "url": "/videos/02.mov",
+    "category": "DeFi"
+  },
+  {
+    "id": "video-03",
+    "title": "NFT Market Analysis 2024",
+    "description": "Deep dive into the current NFT market trends and future predictions",
+    "url": "/videos/03.mov",
+    "category": "Analysis"
+  },
+  {
+    "id": "video-04",
+    "title": "Web3 Wallet Security Best Practices",
+    "description": "Essential security tips to protect your crypto assets and wallet",
+    "url": "/videos/04.mov",
+    "category": "Security"
+  },
+  {
+    "id": "video-05",
+    "title": "Blockchain Technology Deep Dive",
+    "description": "Understanding how blockchain technology works under the hood",
+    "url": "/videos/05.mov",
+    "category": "Technology"
+  },
+  {
+    "id": "video-06",
+    "title": "Crypto Trading Strategies for Beginners",
+    "description": "Learn fundamental trading strategies to start your crypto journey",
+    "url": "/videos/06.mov",
+    "category": "Trading"
+  },
+  {
+    "id": "video-07",
+    "title": "Advanced DeFi Protocols",
+    "description": "Exploring advanced DeFi protocols and yield optimization strategies",
+    "url": "/videos/07.mov",
+    "category": "DeFi"
+  },
+  {
+    "id": "video-08",
+    "title": "Smart Contract Development",
+    "description": "Introduction to smart contract development on Ethereum",
+    "url": "/videos/08.mov",
+    "category": "Development"
+  },
+  {
+    "id": "video-09",
+    "title": "Crypto Market Analysis",
+    "description": "Technical analysis and market trends in cryptocurrency",
+    "url": "/videos/09.mov",
+    "category": "Analysis"
+  },
+  {
+    "id": "video-10",
+    "title": "Web3 Gaming Revolution",
+    "description": "How blockchain is transforming the gaming industry",
+    "url": "/videos/10.mov",
+    "category": "Gaming"
+  },
+  {
+    "id": "video-11",
+    "title": "Decentralized Finance Explained",
+    "description": "Complete overview of the DeFi ecosystem and opportunities",
+    "url": "/videos/11.mp4",
+    "category": "Education"
+  },
+  {
+    "id": "video-12",
+    "title": "Layer 2 Solutions",
+    "description": "Understanding Ethereum Layer 2 scaling solutions",
+    "url": "/videos/12.mov",
+    "category": "Technology"
+  }
+]

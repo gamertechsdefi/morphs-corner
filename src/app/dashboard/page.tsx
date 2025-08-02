@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { pointsService } from '@/services/pointsService';
 import { FiUser, FiMail, FiCalendar, FiTrendingUp, FiGift, FiClock, FiCheck, FiStar, FiLogOut, FiSettings, FiEdit3 } from 'react-icons/fi';
 import type { UserPoints } from '@/lib/supabase';
+import Footer from '@/components/Footer';
 
 // Mock user data - replace with actual user data from your auth system
 const mockUser = {
@@ -268,7 +269,7 @@ export default function Dashboard() {
 
            {/* Daily Points Claim Section */}
             <div className="lg:col-span-2">
-              <div className="bg-gradient-to-br from-green-500 to-blue-600 rounded-xl p-8 text-white mb-8">
+              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-8 text-white mb-8">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-2xl font-bold mb-2">Daily Points Reward</h2>
@@ -503,6 +504,7 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

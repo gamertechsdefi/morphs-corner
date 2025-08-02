@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -13,13 +14,13 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-900 text-white relative overflow-hidden">
+    <footer className="bg-green-900 text-white relative overflow-hidden">
       {/* Large Background Text */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="text-gray-800 font-bold text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[15rem] opacity-10 select-none whitespace-nowrap">
-          Web3 Nigeria
+      {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="text-green-700 font-bold text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[15rem] opacity-10 select-none whitespace-nowrap">
+          Morph's Corner
         </div>
-      </div>
+      </div> */}
 
       {/* Footer Content */}
       <div className="relative z-10 px-4 lg:px-8 py-12 lg:py-16">
@@ -31,18 +32,19 @@ export default function Footer() {
               <div className="mb-6">
                 {/* Logo */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                    <span className="text-gray-900 font-bold text-sm">W3</span>
+                  <div className="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center">
+                    <Image src="/images/mc-logo.png" alt="morph's corner logo" width={40} height={40}  />
                   </div>
-                  <div>
-                    <div className="font-bold text-lg">Web3</div>
-                    <div className="font-bold text-lg">Nigeria</div>
+                  <div className='flex flex-col md:flex-row md:gap-2'>
+                    <div className="font-bold text-lg">Morph's</div>
+                    <div className="font-bold text-lg">Corner</div>
                   </div>
                 </div>
                 
                 {/* Description */}
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  Structuring information access, making it easier and onboarding thousands of Nigerians into the Web3 ecosystem.
+                  Get real time latest news and information about the Morph L2 and access to it's 
+                  ecosystem in one platform
                 </p>
               </div>
             </div>
@@ -51,10 +53,10 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="space-y-3">
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
-                  Podcasts
+                  Articles
                 </a>
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
-                  Articles
+                  Videos
                 </a>
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Events
@@ -62,21 +64,21 @@ export default function Footer() {
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Community
                 </a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
+                {/* <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   W3NCON
-                </a>
+                </a> */}
               </div>
             </div>
 
             {/* Navigation Links - Column 2 */}
             <div className="space-y-4">
               <div className="space-y-3">
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
+                {/* <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Privacy Policy
                 </a>
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Terms Of Use
-                </a>
+                </a> */}
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Telegram
                 </a>
@@ -86,9 +88,9 @@ export default function Footer() {
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Discord
                 </a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
+                {/* <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Spotify
-                </a>
+                </a> */}
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">
                   Contact Us
                 </a>

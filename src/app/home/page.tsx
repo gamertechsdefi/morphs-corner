@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import Footer from "@/components/Footer";
+import FeaturedVideos from "@/components/FeaturedVideos";
+import Link from 'next/link';
 
 interface FeaturedArticle {
   id: number;
@@ -23,80 +25,80 @@ export default function Home() {
   const tweetsData = [
     {
       id: 1,
-      username: "Web3Nigeria",
-      handle: "@Web3Nigeria",
+      username: "Morph's Corner",
+      handle: "@Morph's Corner",
       verified: true,
       content: "To every Nigerian putting in their all in this space, your hard work will pay off. 🚀",
       action: "Go to tweet"
     },
     {
       id: 2,
-      username: "Web3Nigeria",
-      handle: "@Web3Nigeria",
+      username: "Morph's Corner",
+      handle: "@morphsorner",
       verified: true,
       content: "🚨 Breaking: Web3 Nigeria has been ranked the best community in the world 🌍",
       action: "Go to tweet"
     },
     {
       id: 3,
-      username: "Web3Nigeria",
-      handle: "@Web3Nigeria",
+      username: "Morph's Corner",
+      handle: "@morphsorner",
       verified: true,
       content: "It's a great day to make new connections so We're looking for 🔥 - KOL managers - Reply guys/raiders - Content creators/KOLs - Collab guys - CM/Moderators - Graphics Designers If you see this, reply Hi let's connect ❤️",
       action: "Go to tweet"
     },
     {
       id: 4,
-      username: "Web3Nigeria",
-      handle: "@Web3Nigeria",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: true,
       content: "Web3 in Nigeria 🇳🇬",
       action: "Go to tweet"
     },
     {
       id: 5,
-      username: "CryptoNaija",
-      handle: "@CryptoNaija",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: false,
       content: "The future of blockchain technology in Africa starts with Nigeria. We're building the infrastructure for tomorrow! 💪",
       action: "Go to tweet"
     },
     {
       id: 6,
-      username: "BlockchainBae",
-      handle: "@BlockchainBae",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: true,
       content: "Just attended the most amazing Web3 meetup in Lagos! The energy and innovation in this space is incredible 🔥",
       action: "Go to tweet"
     },
     {
       id: 7,
-      username: "DeFiDegen",
-      handle: "@DeFiDegen",
+      username: "Morph's Corner",
+      handle: "@morph's corner",
       verified: false,
       content: "Nigerian developers are leading the charge in DeFi innovation. Proud to be part of this movement! 🌟",
       action: "Go to tweet"
     },
     {
       id: 8,
-      username: "NFTArtist9ja",
-      handle: "@NFTArtist9ja",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: true,
       content: "Dropped my latest NFT collection inspired by Nigerian culture. The intersection of art and blockchain is beautiful! 🎨",
       action: "Go to tweet"
     },
     {
       id: 9,
-      username: "MetaverseMike",
-      handle: "@MetaverseMike",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: false,
       content: "Virtual real estate in the metaverse is the next big thing. Nigerian investors, don't sleep on this opportunity! 🏠",
       action: "Go to tweet"
     },
     {
       id: 10,
-      username: "SmartContractSara",
-      handle: "@SmartContractSara",
+      username: "Morph's Corner",
+      handle: "@morphscorner",
       verified: true,
       content: "Teaching smart contract development to the next generation of Nigerian blockchain developers. The future is bright! 📚",
       action: "Go to tweet"
@@ -172,7 +174,7 @@ export default function Home() {
                 <div className="relative bg-black rounded-lg overflow-hidden h-96 md:h-[500px]">
                   {/* Background Image */}
                   <div className="absolute inset-0">
-                    <div className="w-full h-full bg-gradient-to-r from-purple-900 via-blue-900 to-green-900 opacity-80"></div>
+                    <div className="w-full h-full bg-gradient-to-r from-purple-900 via-green-900 to-green-900 opacity-80"></div>
                     {/* Placeholder for actual image */}
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-32 h-32 bg-yellow-400 rounded-full opacity-20"></div>
@@ -338,7 +340,7 @@ export default function Home() {
 
                   {/* Article Card 2 */}
                   <div className="flex-shrink-0 w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div className="relative h-80 bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+                    <div className="relative h-80 bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center">
                       <div className="text-6xl font-bold text-white opacity-20">CBEX</div>
                     </div>
                     <div className="p-4">
@@ -381,9 +383,9 @@ export default function Home() {
             <div className="mb-8">
               <div className="flex items-center gap-4 mb-6">
                 <h2 className="text-3xl font-bold text-gray-900">TWEETS</h2>
-                <button className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                  Follow Web3 Nigeria
-                </button>
+                <Link href="https://twitter.com/morphscorner" className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                  Follow Morph's Corner
+                </Link>
               </div>
             </div>
 
@@ -392,41 +394,41 @@ export default function Home() {
               <div className="flex gap-6 pb-6 min-w-max">
                 {tweetsData.map((tweet) => (
                   <div key={tweet.id} className="flex-shrink-0 w-80 bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
-                  {/* Tweet Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {tweet.username.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-semibold text-gray-900">{tweet.username}</span>
-                          {tweet.verified && (
-                            <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                          )}
+                    {/* Tweet Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          <Image src="/images/mc-logo.png" alt="morph's corner logo" width={25} height={25} />
                         </div>
-                        <span className="text-sm text-gray-500">{tweet.handle}</span>
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-semibold text-gray-900">{tweet.username}</span>
+                            {tweet.verified && (
+                              <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-500">{tweet.handle}</span>
+                        </div>
                       </div>
+
+                      {/* X (Twitter) Icon */}
+                      <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
                     </div>
 
-                    {/* X (Twitter) Icon */}
-                    <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </div>
+                    {/* Tweet Content */}
+                    <div className="mb-4">
+                      <p className="text-gray-800 text-sm leading-relaxed">{tweet.content}</p>
+                    </div>
 
-                  {/* Tweet Content */}
-                  <div className="mb-4">
-                    <p className="text-gray-800 text-sm leading-relaxed">{tweet.content}</p>
-                  </div>
-
-                  {/* Tweet Action */}
-                  <div className="pt-3 border-t border-gray-100">
-                    <button className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors">
-                      {tweet.action}
-                    </button>
+                    {/* Tweet Action */}
+                    <div className="pt-3 border-t border-gray-100">
+                      <button className="text-green-600 text-sm font-medium hover:text-green-700 transition-colors">
+                        {tweet.action}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -434,6 +436,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Featured Videos Section */}
+        <FeaturedVideos />
 
       </main>
 

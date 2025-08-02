@@ -217,7 +217,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               className={`w-full py-3 px-4 rounded-lg font-semibold transition-all shadow-lg ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed text-white'
-                  : 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700 transform hover:scale-105'
+                  : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transform hover:scale-105'
               }`}
             >
               {loading ? (
