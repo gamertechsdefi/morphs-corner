@@ -384,7 +384,7 @@ export default function Home() {
               <div className="flex items-center gap-4 mb-6">
                 <h2 className="text-3xl font-bold text-gray-900">TWEETS</h2>
                 <Link href="https://twitter.com/morphscorner" className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                  Follow Morph's Corner
+                  Follow Morph&apos;s Corner
                 </Link>
               </div>
             </div>

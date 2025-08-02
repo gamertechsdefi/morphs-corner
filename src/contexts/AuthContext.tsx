@@ -11,10 +11,10 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   profileLoading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -94,7 +94,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single();
 
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
+      const { data, error } = result as { data: Profile | null; error: { code?: string; message?: string } | null };
 
       if (error) {
         // If table doesn't exist (42P01) or no rows found (PGRST116), that's okay
@@ -111,8 +112,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data) {
         setProfile(data);
       }
-    } catch (error: any) {
-      if (error.message === 'Profile fetch timeout') {
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Profile fetch timeout') {
         console.log('Profile fetch timed out - continuing without profile');
       } else {
         console.error('Error fetching profile:', error);
@@ -133,12 +134,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        return { error: { message: data.error } };
+        return { error: new Error(data.error || 'Sign up failed') };
       }
 
       return { error: null };
     } catch (error) {
-      return { error: { message: 'Network error occurred' } };
+      return { error: error instanceof Error ? error : new Error('Network error occurred') };
     }
   };
 
@@ -155,12 +156,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        return { error: { message: data.error } };
+        return { error: new Error(data.error || 'Sign in failed') };
       }
 
       return { error: null };
     } catch (error) {
-      return { error: { message: 'Network error occurred' } };
+      return { error: error instanceof Error ? error : new Error('Network error occurred') };
     }
   };
 
@@ -189,14 +190,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', user.id);
 
       if (error) {
-        return { error };
+        return { error: new Error(error.message || 'Failed to update profile') };
       }
 
       // Refresh profile
       await fetchProfile(user.id);
       return { error: null };
     } catch (error) {
-      return { error };
+      return { error: error instanceof Error ? error : new Error('Unknown error occurred') };
     }
   };
 

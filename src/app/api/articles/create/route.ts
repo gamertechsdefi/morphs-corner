@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Handle image uploads (for now, we'll store them as base64 or file paths)
     let featuredImageUrl = null;
-    let additionalImageUrls: string[] = [];
+    const additionalImageUrls: string[] = [];
 
     if (featuredImage) {
       // In a real application, you would upload to a storage service like Supabase Storage, AWS S3, etc.

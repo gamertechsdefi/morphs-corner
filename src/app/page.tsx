@@ -63,7 +63,7 @@ export default function LandingPage() {
         <div className="relative z-20 text-center px-4 sm:px-6 md:px-8 max-w-4xl mx-auto">
           {/* Main Heading */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="block animate-fade-in-up text-green-400">Morph's Corner</span>
+            <span className="block animate-fade-in-up text-green-400">Morph&apos;s Corner</span>
           </h1>
 
           {/* Subtitle */}

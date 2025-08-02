@@ -36,14 +36,14 @@ export default function Footer() {
                     <Image src="/images/mc-logo.png" alt="morph's corner logo" width={40} height={40}  />
                   </div>
                   <div className='flex flex-col md:flex-row md:gap-2'>
-                    <div className="font-bold text-lg">Morph's</div>
+                    <div className="font-bold text-lg">Morph&apos;s</div>
                     <div className="font-bold text-lg">Corner</div>
                   </div>
                 </div>
                 
                 {/* Description */}
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  Get real time latest news and information about the Morph L2 and access to it's 
+                  Get real time latest news and information about the Morph L2 and access to it&apos;s 
                   ecosystem in one platform
                 </p>
               </div>
@@ -105,10 +105,10 @@ export default function Footer() {
                     The industry moves rapidly.
                   </h3>
                   <h3 className="text-white font-semibold text-lg mb-4">
-                    Let's help you stay up to date
+                    Let&apos;s help you stay up to date
                   </h3>
                   <p className="text-gray-400 text-sm mb-6">
-                    Plus, you don't scroll all the way here for nothing :)
+                    Plus, you don&apos;t scroll all the way here for nothing
                   </p>
                 </div>
 

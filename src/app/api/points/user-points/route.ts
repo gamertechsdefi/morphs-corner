@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = createRouteHandlerClient({ cookies: () => Promise.resolve(cookieStore) });
 
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -18,11 +18,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user points
-    let { data: userPoints, error: pointsError } = await supabase
+    const { data: initialUserPoints, error: pointsError } = await supabase
       .from('user_points')
       .select('*')
       .eq('user_id', user.id)
       .single();
+
+    let userPoints = initialUserPoints;
 
     // Handle missing table or missing user points
     if (pointsError) {

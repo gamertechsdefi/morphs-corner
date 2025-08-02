@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
-import { FiSearch, FiX, FiUser, FiHome, FiEdit, FiFileText, FiMenu, FiPlay, FiGrid } from 'react-icons/fi';
+import { FiSearch, FiX, FiUser, FiHome, FiEdit, FiFileText, FiMenu, FiPlay } from 'react-icons/fi';
 import { usePathname } from 'next/navigation';
 import AuthModal from './AuthModal';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,7 +50,7 @@ function SearchComponent({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
                     {searchQuery && (
                         <div className="space-y-2">
-                            <p className="text-sm text-gray-600 mb-3">Search results for "{searchQuery}":</p>
+                            <p className="text-sm text-gray-600 mb-3">Search results for &quot;{searchQuery}&quot;:</p>
                             <div className="space-y-2 max-h-60 overflow-y-auto">
                                 {/* Sample search results */}
                                 <div className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-100">

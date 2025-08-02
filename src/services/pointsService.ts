@@ -14,7 +14,7 @@ export class PointsService {
   }
 
   // Get user points
-  async getUserPoints(userId: string): Promise<UserPoints | null> {
+  async getUserPoints() {
     try {
       const response = await fetch('/api/points/user-points');
 
@@ -32,7 +32,7 @@ export class PointsService {
   }
 
   // Initialize user points (called when user signs up)
-  async initializeUserPoints(userId: string): Promise<{ error: any }> {
+  async initializeUserPoints(userId: string): Promise<{ error: Error | null }> {
     try {
       const { error } = await this.supabase
         .from('user_points')
@@ -43,9 +43,9 @@ export class PointsService {
           level: 'Bronze'
         });
 
-      return { error };
+      return { error: error ? new Error(error.message) : null };
     } catch (error) {
-      return { error };
+      return { error: error instanceof Error ? error : new Error('Unknown error occurred') };
     }
   }
 
@@ -68,7 +68,7 @@ export class PointsService {
   }
 
   // Claim daily points
-  async claimDailyPoints(userId: string): Promise<{ success: boolean; points?: number; error?: any }> {
+  async claimDailyPoints(userId: string): Promise<{ success: boolean; points?: number; error?: string }> {
     try {
       const response = await fetch('/api/points/claim-daily', {
         method: 'POST',
@@ -92,9 +92,9 @@ export class PointsService {
     points: number,
     activityType: string,
     description: string
-  ): Promise<{ success: boolean; error?: any }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
-      const userPoints = await this.getUserPoints(userId);
+      const userPoints = await this.getUserPoints();
       if (!userPoints) {
         return { success: false, error: 'User points not found' };
       }
@@ -113,7 +113,7 @@ export class PointsService {
         .eq('user_id', userId);
 
       if (updateError) {
-        return { success: false, error: updateError };
+        return { success: false, error: updateError.message || 'Failed to update points' };
       }
 
       // Record transaction
@@ -121,7 +121,7 @@ export class PointsService {
 
       return { success: true };
     } catch (error) {
-      return { success: false, error };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
     }
   }
 
@@ -194,7 +194,7 @@ export class PointsService {
     userId: string,
     taskType: string,
     points: number
-  ): Promise<{ success: boolean; error?: any }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch('/api/points/complete-task', {
         method: 'POST',

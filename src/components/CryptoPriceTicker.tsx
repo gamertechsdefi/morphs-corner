@@ -11,6 +11,16 @@ interface CryptoData {
   market_cap_rank: number;
 }
 
+// Interface for CoinGecko API response
+interface CoinGeckoApiResponse {
+  id: string;
+  symbol: string;
+  name: string;
+  current_price: number | null;
+  price_change_percentage_24h: number | null;
+  market_cap_rank: number | null;
+}
+
 export default function CryptoPriceTicker() {
   const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,10 +39,10 @@ export default function CryptoPriceTicker() {
         throw new Error('Failed to fetch crypto data');
       }
 
-      const data = await response.json();
+      const data: CoinGeckoApiResponse[] = await response.json();
 
       // Transform the data to match our interface
-      const transformedData: CryptoData[] = data.map((coin: any) => ({
+      const transformedData: CryptoData[] = data.map((coin) => ({
         id: coin.id,
         symbol: coin.symbol.toUpperCase(),
         name: coin.name,
@@ -44,7 +54,8 @@ export default function CryptoPriceTicker() {
       setCryptoData(transformedData);
       setError(null);
     } catch (err) {
-      setError('Failed to load crypto prices');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load crypto prices';
+      setError(errorMessage);
       console.error('Error fetching crypto data:', err);
     } finally {
       setLoading(false);

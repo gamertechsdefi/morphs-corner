@@ -67,7 +67,7 @@ export default function Dashboard() {
         }
 
         // Get user points (this will create them if they don't exist)
-        const points = await pointsService.getUserPoints(user.id);
+        const points = await pointsService.getUserPoints();
         if (points) {
           setUserPoints(points);
           setNeedsSetup(false);
@@ -120,7 +120,7 @@ export default function Dashboard() {
 
       if (result.success) {
         // Refresh user points
-        const updatedPoints = await pointsService.getUserPoints(user.id);
+        const updatedPoints = await pointsService.getUserPoints();
         if (updatedPoints) {
           setUserPoints(updatedPoints);
         }
@@ -154,7 +154,7 @@ export default function Dashboard() {
         ));
 
         // Refresh user points
-        const updatedPoints = await pointsService.getUserPoints(user.id);
+        const updatedPoints = await pointsService.getUserPoints();
         if (updatedPoints) {
           setUserPoints(updatedPoints);
         }
@@ -263,7 +263,7 @@ export default function Dashboard() {
               Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'User'}! 👋
             </h1>
             <p className="text-gray-600">
-              Here's your Web3 journey overview and daily rewards.
+              Here&apos;s your Web3 journey overview and daily rewards.
             </p>
           </div>
 
