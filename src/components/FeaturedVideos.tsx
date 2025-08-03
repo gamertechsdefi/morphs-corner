@@ -66,7 +66,7 @@ export default function FeaturedVideos() {
                 </video>
                 
                 {/* Play Button Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                   <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <FiPlay className="w-6 h-6 text-gray-800 ml-1" />
                   </div>

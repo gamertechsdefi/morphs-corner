@@ -443,148 +443,55 @@ With platforms like Morpha_nft , Mintify , and NFTs2Me , you can create, collect
   },
   {
     id: 5,
-    title: "DeFi Explained: Your Gateway to Decentralized Finance",
-    description: "Discover the world of decentralized finance (DeFi) and learn how to participate in this revolutionary financial system.",
+    title: "Highway Hustle: The Race Continues!",
+    description: "Highway Hustle is BACK for more with a new engine under the hood, and the road is wide open.",
     content: `
-# DeFi Explained: Your Gateway to Decentralized Finance
 
-Decentralized Finance (DeFi) is revolutionizing the financial industry by creating an open, permissionless financial system built on blockchain technology.
+    Highway Hustle is BACK for more with a new engine under the hood, and the road is wide open.
 
-## What is DeFi?
+Powered by [Kult Games](https://kult.games/) and [Morph](https://x.com/MorphLayer), this four-week extension runs from July 25 to August 22, giving players more shots at leaderboard glory and 500 Morph Points every week.
 
-DeFi refers to financial services built on blockchain networks, primarily Ethereum, that operate without traditional intermediaries like banks or brokers.
+Whether you're chasing first place or staying ahead of the pack, every turn will count.
+### What’s New
 
-## Core DeFi Services
+1. A brand new garage
+2. Upgraded features and boosters
+3. Fresh weekly leaderboard resets
+4. A new prize structure to reward more racers
 
-### 1. Lending and Borrowing
-- Earn interest on crypto deposits
-- Borrow against crypto collateral
-- No credit checks required
+No NFT required. Just connect, play, and compete.
 
-### 2. Decentralized Exchanges (DEXs)
-- Trade cryptocurrencies directly
-- No KYC requirements
-- Maintain custody of your funds
+### Prize Breakdown
+Each week, 500 Morph Points will be distributed across the top 100 racers on the leaderboard:
 
-### 3. Yield Farming
-- Earn rewards for providing liquidity
-- Stake tokens in various protocols
-- Compound returns through reinvestment
+1st Place - 	45 Points
+2nd Place -	35 Points
+3rd Place - 	20 Points
+4th to 10th Place - 	10 points each
+11th to 30th Place - 	7 points each
+31st to 60th - 	5 points each
+61st to 100th - 	1 point each
+Every week resets the leaderboard. Every week is a new shot to win.
 
-### 4. Synthetic Assets
-- Trade derivatives of real-world assets
-- Access to stocks, commodities, currencies
-- No need for traditional brokers
+### Dates to know
+1. July 25: Week 5 begins
+2. August 1: Week 6
+3. August 8: Week 7
+4. August 15: Week 8
+5. August 22: Final day
 
-## Popular DeFi Protocols
-
-### 1. Uniswap
-- Leading decentralized exchange
-- Automated market maker (AMM)
-- Easy token swapping
-
-### 2. Aave
-- Lending and borrowing protocol
-- Flash loans available
-- Multiple collateral options
-
-### 3. Compound
-- Algorithmic money market
-- Earn interest on deposits
-- Borrow against collateral
-
-### 4. MakerDAO
-- Decentralized stablecoin (DAI)
-- Collateralized debt positions
-- Governance token (MKR)
-
-## Getting Started with DeFi
-
-### Step 1: Set Up a Wallet
-- Use MetaMask or similar
-- Secure your seed phrase
-- Add Ethereum network
-
-### Step 2: Get Some ETH
-- Buy from centralized exchange
-- Transfer to your wallet
-- Keep some for gas fees
-
-### Step 3: Choose a Protocol
-- Start with established platforms
-- Read documentation carefully
-- Understand risks involved
-
-### Step 4: Start Small
-- Begin with small amounts
-- Learn how protocols work
-- Gradually increase exposure
-
-## DeFi Risks to Consider
-
-### 1. Smart Contract Risk
-- Code vulnerabilities
-- Potential for exploits
-- Audit importance
-
-### 2. Impermanent Loss
-- Risk in liquidity provision
-- Price divergence effects
-- Calculate potential losses
-
-### 3. Regulatory Risk
-- Evolving regulations
-- Potential restrictions
-- Compliance requirements
-
-### 4. Market Risk
-- High volatility
-- Liquidation risk
-- Correlation effects
-
-## DeFi vs Traditional Finance
-
-| Aspect | DeFi | Traditional Finance |
-|--------|------|-------------------|
-| Access | Permissionless | Requires approval |
-| Custody | Self-custody | Third-party custody |
-| Transparency | Fully transparent | Limited transparency |
-| Operating Hours | 24/7 | Business hours |
-| Geographic Limits | Global | Regional restrictions |
-| Intermediaries | Minimal | Multiple layers |
-
-## Future of DeFi
-
-DeFi is rapidly evolving with new innovations:
-- Cross-chain protocols
-- Improved user interfaces
-- Better security measures
-- Regulatory clarity
-- Institutional adoption
-
-## Best Practices for DeFi
-
-1. **Do Your Own Research (DYOR)**
-2. **Start with small amounts**
-3. **Understand the risks**
-4. **Use reputable protocols**
-5. **Keep private keys secure**
-6. **Stay updated on developments**
-7. **Diversify your exposure**
-
-## Conclusion
-
-DeFi represents the future of finance, offering unprecedented access to financial services. While risks exist, the potential for innovation and financial inclusion makes DeFi an exciting space to explore.
+### Ready to Race?
+[Play Highway Hustle](https://highwayhustle.xyz/?ref=morph.ghost.io)
     `,
     author: "Emma Rodriguez",
     date: "Tuesday, May 13, 2025",
-    imageUrl: "/api/placeholder/600/400",
+    imageUrl: "/images/highway-1.png",
     category: "EDUCATION",
     tags: ["DeFi", "Decentralized Finance", "Ethereum", "Lending"],
     readTime: 18,
     featured: false,
-    trending: false,
-    onboarding: true,
+    trending: true,
+    onboarding: false,
     difficulty: "Intermediate",
     likes: 67,
     comments: 15

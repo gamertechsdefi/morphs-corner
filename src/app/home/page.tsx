@@ -360,20 +360,15 @@ export default function Home() {
                   {trendingArticles.map((article) => (
                     <div key={article.id} className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                       <div className="relative h-80 bg-gradient-to-br from-gray-900 to-green-900">
-                        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-white text-center p-6">
-                            <div className="text-4xl mb-4">🔥</div>
-                            <h3 className="text-xl font-bold">{article.difficulty}</h3>
-                            <p className="text-sm opacity-80">{article.readTime} min read</p>
-                          </div>
+                        <div className="absolute inset-0 ">
+                          <Image src={article.imageUrl} alt='image' width={700} height={200} className='w-full h-full' />
                         </div>
                       </div>
                       <div className="p-4">
                         <div className="mb-4">
-                          <div className="text-xs font-medium mb-2 text-gray-600">
+                          {/* <div className="text-xs font-medium mb-2 text-gray-600">
                             {article.category} • {article.tags.slice(0, 2).join(' • ')} • TRENDING
-                          </div>
+                          </div> */}
                           <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">
                             <Link href={`/articles/${createSlug(article.title)}`} className="hover:text-green-600 transition-colors">
                               {article.title}
@@ -480,7 +475,6 @@ export default function Home() {
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-white text-center p-6">
-                            <div className="text-4xl mb-4">📚</div>
                             <h3 className="text-xl font-bold">{article.difficulty}</h3>
                             <p className="text-sm opacity-80">{article.readTime} min read</p>
                           </div>
