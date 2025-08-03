@@ -15,6 +15,9 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-gray-900 mb-6 mt-10">$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-gray-900 mb-8 mt-12">$1</h1>');
 
+    // Bold + Italic (must come before individual bold/italic)
+    html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="font-bold italic text-gray-900">$1</strong>');
+
     // Bold
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>');
 
@@ -27,12 +30,12 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     // Inline code
     html = html.replace(/`(.*?)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>');
 
-    // Links
+    // Links (markdown format)
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>');
 
     // Unordered lists
     html = html.replace(/^\* (.*$)/gim, '<li class="mb-2">$1</li>');
-    html = html.replace(/(<li class="mb-2">.*<\/li>)/s, '<ul class="list-disc list-inside mb-4 space-y-2 ml-4">$1</ul>');
+    html = html.replace(/(<li class="mb-2">.*<\/li>)/g, '<ul class="list-disc list-inside mb-4 space-y-2 ml-4">$1</ul>');
 
     // Ordered lists
     html = html.replace(/^\d+\. (.*$)/gim, '<li class="mb-2">$1</li>');
@@ -54,7 +57,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     });
 
     // Wrap tables
-    html = html.replace(/(<tr>.*<\/tr>)/s, '<table class="w-full border-collapse border border-gray-300 my-4">$1</table>');
+    html = html.replace(/(<tr>.*<\/tr>)/g, '<table class="w-full border-collapse border border-gray-300 my-4">$1</table>');
 
     // Blockquotes
     html = html.replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-blue-500 pl-4 py-2 my-4 bg-blue-50 italic text-gray-700">$1</blockquote>');
