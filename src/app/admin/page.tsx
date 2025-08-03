@@ -183,7 +183,7 @@ export default function AdminDashboard() {
             </p>
 
             {/* Debug info */}
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm">
+            {/* <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm">
               <p><strong>Loading Debug Info:</strong></p>
               <p>Auth Loading: {authLoading ? 'true' : 'false'}</p>
               <p>Profile Loading: {profileLoading ? 'true' : 'false'}</p>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
               <p>Profile: {profile ? 'exists' : 'null'}</p>
               <p>Profile Role: {profile?.role || 'null'}</p>
               <p>Is Admin: {isAdmin ? 'true' : 'false'}</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
             <p className="text-gray-600 mb-4">You don&apos;t have admin privileges.</p>
 
             {/* Debug info */}
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md mx-auto">
+            {/* <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md mx-auto">
               <p><strong>Debug Info:</strong></p>
               <p>Auth Loading: {authLoading ? 'true' : 'false'}</p>
               <p>Profile Loading: {profileLoading ? 'true' : 'false'}</p>
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
               <p>Role === 'admin': {profile?.role === 'admin' ? 'true' : 'false'}</p>
               <p>Role === 'super_admin': {profile?.role === 'super_admin' ? 'true' : 'false'}</p>
               <p>IDs Match: {user?.id === profile?.id ? 'true' : 'false'}</p>
-            </div>
+            </div> */}
 
             <div className="flex gap-3 mt-4">
               <button
