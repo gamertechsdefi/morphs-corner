@@ -68,14 +68,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        console.log('🔄 Auth state change:', { event: _event, hasSession: !!session, userEmail: session?.user?.email });
+
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
+          console.log('👤 User session found:', {
+            id: session.user.id,
+            email: session.user.email
+          });
+
           setProfileLoading(true);
           await fetchProfile(session.user.id);
           setProfileLoading(false);
         } else {
+          console.log('❌ No user session found');
           setProfile(null);
           setProfileLoading(false);
           setIsAdmin(false);
@@ -88,11 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    console.log('🔍 Starting fetchProfile for userId:', userId);
+
     try {
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Profile fetch timeout')), 3000); // 3 second timeout
       });
+
+      console.log('📡 Making Supabase query to profiles table...');
 
       const fetchPromise = supabase
         .from('profiles')
@@ -100,38 +112,96 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single();
 
+      console.log('⏳ Waiting for profile fetch result...');
       const result = await Promise.race([fetchPromise, timeoutPromise]);
       const { data, error } = result as { data: Profile | null; error: { code?: string; message?: string } | null };
 
+      console.log('📊 Profile fetch result:', { data, error, hasData: !!data, errorCode: error?.code, errorMessage: error?.message });
+
       if (error) {
+        console.log('⚠️ Profile fetch error detected:', error);
+
         // If table doesn't exist (42P01) or no rows found (PGRST116), that's okay
         if (error.code === '42P01') {
-          console.log('Profiles table does not exist yet. This is normal for new setups.');
+          console.log('❌ Profiles table does not exist yet. This is normal for new setups.');
           return;
         }
-        if (error.code !== 'PGRST116') {
-          console.error('Error fetching profile:', error);
+        if (error.code === 'PGRST116') {
+          console.log('❌ No profile found for user ID:', userId);
           return;
         }
+
+        console.error('❌ Unexpected error fetching profile:', error);
+        return;
       }
 
       if (data) {
+        console.log('🔍 Profile data received:', {
+          id: data.id,
+          email: data.email,
+          role: data.role,
+          full_name: data.full_name,
+          created_at: data.created_at
+        });
+
         setProfile(data);
         // Set admin status based on role
         const adminStatus = data.role === 'admin' || data.role === 'super_admin';
+
+        console.log('🔐 Admin status check:', {
+          role: data.role,
+          isAdmin: adminStatus,
+          roleCheck: `${data.role} === 'admin'? ${data.role === 'admin'}`,
+          superAdminCheck: `${data.role} === 'super_admin'? ${data.role === 'super_admin'}`
+        });
+
         setIsAdmin(adminStatus);
         setCanCreateArticles(adminStatus);
       } else {
+        console.log('❌ No profile data found');
         // Reset admin status if no profile
         setIsAdmin(false);
         setCanCreateArticles(false);
       }
     } catch (error) {
       if (error instanceof Error && error.message === 'Profile fetch timeout') {
-        console.log('Profile fetch timed out - continuing without profile');
+        console.log('⏰ Profile fetch timed out - continuing without profile');
       } else {
-        console.error('Error fetching profile:', error);
+        console.error('💥 Unexpected error in fetchProfile:', error);
       }
+    }
+  };
+
+  // Manual function to create profile if it doesn't exist
+  const createProfileIfMissing = async (user: any) => {
+    if (!user) return;
+
+    console.log('🔧 Attempting to create profile for user:', user.email);
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || user.email.split('@')[0],
+          role: 'user', // Default role
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Error creating profile:', error);
+        return null;
+      }
+
+      console.log('✅ Profile created successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('💥 Unexpected error creating profile:', error);
+      return null;
     }
   };
 

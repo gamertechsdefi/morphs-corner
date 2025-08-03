@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { FiUsers, FiFileText, FiShield, FiSettings, FiPlus } from 'react-icons/fi';
+import { FiUsers, FiFileText, FiShield, FiSettings, FiPlus, FiUserPlus, FiX, FiMail } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminService } from '@/services/adminService';
@@ -19,7 +19,7 @@ interface AdminStats {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, loading: authLoading, isAdmin, profile } = useAuth();
+  const { user, loading: authLoading, profileLoading, isAdmin, profile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<AdminStats>({ totalUsers: 0, totalAdmins: 0, totalArticles: 0 });
@@ -27,23 +27,49 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'articles'>('overview');
   const [showSuperAdminModal, setShowSuperAdminModal] = useState(false);
   const [pendingRoleChange, setPendingRoleChange] = useState<{ userId: string; newRole: 'user' | 'admin' } | null>(null);
+  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [addAdminLoading, setAddAdminLoading] = useState(false);
+  const [addAdminError, setAddAdminError] = useState<string | null>(null);
 
   useEffect(() => {
     console.log('Admin page auth state:', {
       authLoading,
+      profileLoading,
       user: user?.email,
       isAdmin,
-      profileRole: profile?.role
+      profileRole: profile?.role,
+      hasUser: !!user,
+      hasProfile: !!profile
     });
 
-    if (!authLoading && (!user || !isAdmin)) {
-      console.log('Redirecting to home - not admin or no user');
-      router.push('/');
-    } else if (user && isAdmin) {
-      console.log('Loading admin data - user is admin');
-      loadAdminData();
+    // Don't redirect while still loading auth or profile
+    if (authLoading || profileLoading) {
+      console.log('Still loading auth or profile, waiting...');
+      return;
     }
-  }, [user, authLoading, isAdmin, profile, router]);
+
+    // Only redirect after both auth and profile loading are complete
+    if (!user) {
+      console.log('No user found, redirecting to home');
+      router.push('/');
+      return;
+    }
+
+    if (!isAdmin) {
+      console.log('User is not admin, redirecting to home', {
+        userEmail: user.email,
+        profileRole: profile?.role,
+        isAdmin
+      });
+      router.push('/');
+      return;
+    }
+
+    // User is admin, load admin data
+    console.log('User is admin, loading admin data');
+    loadAdminData();
+  }, [user, authLoading, profileLoading, isAdmin, profile, router]);
 
   const loadAdminData = async () => {
     setLoading(true);
@@ -106,23 +132,66 @@ export default function AdminDashboard() {
     }
   };
 
-  if (authLoading || loading) {
+  const handleAddAdmin = async () => {
+    if (!newAdminEmail.trim()) {
+      setAddAdminError('Please enter an email address');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newAdminEmail.trim())) {
+      setAddAdminError('Please enter a valid email address');
+      return;
+    }
+
+    setAddAdminLoading(true);
+    setAddAdminError(null);
+
+    try {
+      // First, try to find the user by email
+      const result = await adminService.promoteUserToAdmin(newAdminEmail.trim());
+
+      if (result.error) {
+        setAddAdminError(result.error);
+      } else {
+        // Success - refresh the users list and close modal
+        await loadAdminData();
+        setShowAddAdminModal(false);
+        setNewAdminEmail('');
+        setAddAdminError(null);
+      }
+    } catch (error) {
+      console.error('Error adding admin:', error);
+      setAddAdminError('Failed to add admin. Please try again.');
+    } finally {
+      setAddAdminLoading(false);
+    }
+  };
+
+  if (authLoading || profileLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading admin dashboard...</p>
+            <p className="text-gray-600">
+              {authLoading ? 'Loading authentication...' :
+               profileLoading ? 'Loading profile...' :
+               'Loading admin dashboard...'}
+            </p>
 
             {/* Debug info */}
             <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm">
-              <p><strong>Debug Info:</strong></p>
+              <p><strong>Loading Debug Info:</strong></p>
               <p>Auth Loading: {authLoading ? 'true' : 'false'}</p>
+              <p>Profile Loading: {profileLoading ? 'true' : 'false'}</p>
+              <p>Dashboard Loading: {loading ? 'true' : 'false'}</p>
               <p>User: {user?.email || 'null'}</p>
-              <p>Is Admin: {isAdmin ? 'true' : 'false'}</p>
+              <p>Profile: {profile ? 'exists' : 'null'}</p>
               <p>Profile Role: {profile?.role || 'null'}</p>
-              <p>Loading: {loading ? 'true' : 'false'}</p>
+              <p>Is Admin: {isAdmin ? 'true' : 'false'}</p>
             </div>
           </div>
         </div>
@@ -143,19 +212,34 @@ export default function AdminDashboard() {
             <div className="mt-4 p-4 bg-gray-100 rounded-lg text-left text-sm max-w-md mx-auto">
               <p><strong>Debug Info:</strong></p>
               <p>Auth Loading: {authLoading ? 'true' : 'false'}</p>
+              <p>Profile Loading: {profileLoading ? 'true' : 'false'}</p>
               <p>User: {user?.email || 'null'}</p>
-              <p>Is Admin: {isAdmin ? 'true' : 'false'}</p>
-              <p>Profile Role: {profile?.role || 'null'}</p>
-              <p>Profile ID: {profile?.id || 'null'}</p>
               <p>User ID: {user?.id || 'null'}</p>
+              <p>Profile: {profile ? 'exists' : 'null'}</p>
+              <p>Profile ID: {profile?.id || 'null'}</p>
+              <p>Profile Email: {profile?.email || 'null'}</p>
+              <p>Profile Role: "{profile?.role || 'null'}"</p>
+              <p>Profile Role Type: {typeof profile?.role}</p>
+              <p>Is Admin: {isAdmin ? 'true' : 'false'}</p>
+              <p>Role === 'admin': {profile?.role === 'admin' ? 'true' : 'false'}</p>
+              <p>Role === 'super_admin': {profile?.role === 'super_admin' ? 'true' : 'false'}</p>
+              <p>IDs Match: {user?.id === profile?.id ? 'true' : 'false'}</p>
             </div>
 
-            <button
-              onClick={() => router.push('/')}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Go Home
-            </button>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Refresh Page
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Go Home
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -292,7 +376,16 @@ export default function AdminDashboard() {
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-semibold text-gray-900">User Management</h2>
-                    <p className="text-sm text-gray-600">{users.length} total users</p>
+                    <div className="flex items-center gap-4">
+                      <p className="text-sm text-gray-600">{users.length} total users</p>
+                      <button
+                        onClick={() => setShowAddAdminModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        <FiUserPlus className="w-4 h-4" />
+                        Add Admin
+                      </button>
+                    </div>
                   </div>
 
                   {/* Users Table */}
@@ -406,6 +499,91 @@ export default function AdminDashboard() {
         }}
         onSuccess={handleSuperAdminSuccess}
       />
+
+      {/* Add Admin Modal */}
+      {showAddAdminModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Add New Admin</h3>
+              <button
+                onClick={() => {
+                  setShowAddAdminModal(false);
+                  setNewAdminEmail('');
+                  setAddAdminError(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-4">
+                Enter the email address of the user you want to promote to admin.
+                The user must have already signed up and logged in at least once.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="adminEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="email"
+                      id="adminEmail"
+                      value={newAdminEmail}
+                      onChange={(e) => {
+                        setNewAdminEmail(e.target.value);
+                        setAddAdminError(null);
+                      }}
+                      placeholder="user@example.com"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      disabled={addAdminLoading}
+                    />
+                  </div>
+                </div>
+
+                {addAdminError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600">{addAdminError}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowAddAdminModal(false);
+                  setNewAdminEmail('');
+                  setAddAdminError(null);
+                }}
+                className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                disabled={addAdminLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddAdmin}
+                disabled={addAdminLoading || !newAdminEmail.trim()}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {addAdminLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Adding...
+                  </div>
+                ) : (
+                  'Add Admin'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

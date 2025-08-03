@@ -147,20 +147,55 @@ export class AdminService {
   }
 
   // Super admin can promote any user to admin (no email restrictions)
-  async promoteUserToAdmin(userId: string): Promise<{ success: boolean; error: string | null }> {
+  async promoteUserToAdmin(emailOrUserId: string): Promise<{ success: boolean; error: string | null }> {
     try {
       const isSuperAdmin = await this.isCurrentUserSuperAdmin();
       if (!isSuperAdmin) {
         return { success: false, error: 'Super admin privileges required' };
       }
 
-      const { error } = await this.supabase
-        .from('profiles')
-        .update({ role: 'admin', updated_at: new Date().toISOString() })
-        .eq('id', userId);
+      // Check if input is email or userId
+      const isEmail = emailOrUserId.includes('@');
 
-      if (error) {
-        return { success: false, error: error.message };
+      if (isEmail) {
+        // Handle email-based promotion
+        const { data: existingProfile, error: profileError } = await this.supabase
+          .from('profiles')
+          .select('id, email, role')
+          .eq('email', emailOrUserId)
+          .single();
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error('Error checking existing profile:', profileError);
+          return { success: false, error: 'Failed to check user profile' };
+        }
+
+        if (!existingProfile) {
+          return { success: false, error: 'User not found. The user must sign up and log in at least once before being promoted to admin.' };
+        }
+
+        if (existingProfile.role === 'admin' || existingProfile.role === 'super_admin') {
+          return { success: false, error: 'User is already an admin' };
+        }
+
+        const { error } = await this.supabase
+          .from('profiles')
+          .update({ role: 'admin', updated_at: new Date().toISOString() })
+          .eq('email', emailOrUserId);
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+      } else {
+        // Handle userId-based promotion (original functionality)
+        const { error } = await this.supabase
+          .from('profiles')
+          .update({ role: 'admin', updated_at: new Date().toISOString() })
+          .eq('id', emailOrUserId);
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
       }
 
       return { success: true, error: null };
