@@ -427,7 +427,7 @@ function NoteModal({ onInsert, onClose }: { onInsert: (type: 'info' | 'warning' 
             <label className="block text-sm font-medium text-gray-700 mb-1">Note Type</label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as any)}
+              onChange={(e) => setType(e.target.value as 'info' | 'warning' | 'success' | 'error')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="info">💡 Info</option>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { FiArrowLeft, FiImage, FiX, FiSave, FiTag, FiEye, FiEdit3, FiUpload, FiCheck } from 'react-icons/fi';
+import { FiArrowLeft, FiImage, FiX, FiSave, FiTag, FiEye, FiEdit3, FiUpload } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';

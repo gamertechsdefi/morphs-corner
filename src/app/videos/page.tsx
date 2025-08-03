@@ -5,15 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { FiPlay, FiFilter, FiSearch } from 'react-icons/fi';
 import Link from 'next/link';
-import videosData from '@/data/videos.json';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  category: string;
-}
+import { Video, getAllVideos, getVideoCategories, createVideoSlug } from '@/data/videoHelpers';
 
 export default function VideosPage() {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -23,8 +15,9 @@ export default function VideosPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    setVideos(videosData);
-    setFilteredVideos(videosData);
+    const allVideos = getAllVideos();
+    setVideos(allVideos);
+    setFilteredVideos(allVideos);
   }, []);
 
   useEffect(() => {
@@ -46,7 +39,7 @@ export default function VideosPage() {
     setFilteredVideos(filtered);
   }, [videos, selectedCategory, searchQuery]);
 
-  const categories = ['All', ...Array.from(new Set(videos.map(video => video.category)))];
+  const categories = ['All', ...getVideoCategories()];
 
 
 
@@ -144,7 +137,7 @@ export default function VideosPage() {
               {filteredVideos.map((video) => (
                 <Link
                   key={video.id}
-                  href={`/videos/${video.id}`}
+                  href={`/videos/${createVideoSlug(video.title)}`}
                   className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
                   {/* Video Thumbnail */}

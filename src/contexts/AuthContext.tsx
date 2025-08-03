@@ -173,7 +173,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Manual function to create profile if it doesn't exist
-  const createProfileIfMissing = async (user: any) => {
+  const createProfileIfMissing = async (user: User) => {
     if (!user) return;
 
     console.log('🔧 Attempting to create profile for user:', user.email);
@@ -183,8 +183,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from('profiles')
         .insert({
           id: user.id,
-          email: user.email,
-          full_name: user.user_metadata?.full_name || user.email.split('@')[0],
+          email: user.email || '',
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
           role: 'user', // Default role
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

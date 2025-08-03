@@ -6,15 +6,14 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { FiPlay, FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import Link from 'next/link';
-import videosData from '@/data/videos.json';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  category: string;
-}
+import {
+  Video,
+  getVideoBySlug,
+  getVideoById,
+  getVideoByTitle,
+  getRelatedVideos,
+  createVideoSlug
+} from '@/data/videoHelpers';
 
 export default function VideoPage() {
   const params = useParams();
@@ -26,21 +25,33 @@ export default function VideoPage() {
 
   useEffect(() => {
     if (params.id) {
-      const videoId = params.id as string;
-      const foundVideo = videosData.find(v => v.id === videoId);
-      
+      const videoSlugOrId = params.id as string;
+      let foundVideo: Video | undefined;
+
+      // Try to find by slug first (most common case now)
+      foundVideo = getVideoBySlug(videoSlugOrId);
+
+      // If not found by slug, try by ID (backward compatibility)
+      if (!foundVideo) {
+        foundVideo = getVideoById(videoSlugOrId);
+      }
+
+      // If still not found, try by title (backward compatibility)
+      if (!foundVideo) {
+        foundVideo = getVideoByTitle(decodeURIComponent(videoSlugOrId));
+      }
+
       if (foundVideo) {
         setVideo(foundVideo);
-        
-        // Get related videos (same category, excluding current video)
-        const related = videosData
-          .filter(v => v.id !== videoId && v.category === foundVideo.category)
-          .slice(0, 3);
+
+        // Get related videos using the slug
+        const videoSlug = createVideoSlug(foundVideo.title);
+        const related = getRelatedVideos(videoSlug, 3);
         setRelatedVideos(related);
       } else {
         setError('Video not found');
       }
-      
+
       setLoading(false);
     }
   }, [params.id]);
@@ -176,7 +187,7 @@ export default function VideoPage() {
                     {relatedVideos.map((relatedVideo) => (
                       <Link
                         key={relatedVideo.id}
-                        href={`/videos/${relatedVideo.id}`}
+                        href={`/videos/${createVideoSlug(relatedVideo.title)}`}
                         className="group flex gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
                       >
                         <div className="relative w-24 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded overflow-hidden flex-shrink-0 flex items-center justify-center">

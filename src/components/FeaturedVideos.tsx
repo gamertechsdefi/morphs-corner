@@ -3,22 +3,15 @@
 import { useState, useEffect } from 'react';
 import { FiPlay, FiArrowRight } from 'react-icons/fi';
 import Link from 'next/link';
-import videosData from '@/data/videos.json';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  category: string;
-}
+import { Video, getAllVideos, createVideoSlug } from '@/data/videoHelpers';
 
 export default function FeaturedVideos() {
   const [videos, setVideos] = useState<Video[]>([]);
 
   useEffect(() => {
     // Get the first 6 videos for the home page
-    setVideos(videosData.slice(0, 6));
+    const allVideos = getAllVideos();
+    setVideos(allVideos.slice(0, 6));
   }, []);
 
 
@@ -52,7 +45,7 @@ export default function FeaturedVideos() {
           {videos.map((video) => (
             <Link
               key={video.id}
-              href={`/videos/${video.id}`}
+              href={`/videos/${createVideoSlug(video.title)}`}
               className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               {/* Video Thumbnail */}
