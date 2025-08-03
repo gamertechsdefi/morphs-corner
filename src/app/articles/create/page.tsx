@@ -11,7 +11,7 @@ import Image from 'next/image';
 
 export default function CreateArticlePage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, canCreateArticles } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -39,10 +39,10 @@ export default function CreateArticlePage() {
   ];
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && (!user || !canCreateArticles)) {
       router.push('/articles');
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, canCreateArticles, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -135,7 +135,7 @@ export default function CreateArticlePage() {
     );
   }
 
-  if (!user) {
+  if (!user || !canCreateArticles) {
     return null; // Will redirect
   }
 

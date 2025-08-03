@@ -8,6 +8,7 @@ import { FiArrowLeft, FiEdit, FiTrash2, FiEye, FiHeart, FiPlus, FiCalendar } fro
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { createSlug } from '@/data/articles';
 
 interface Article {
   id: string;
@@ -26,18 +27,18 @@ interface Article {
 
 export default function MyArticlesPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, canCreateArticles } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && (!user || !canCreateArticles)) {
       router.push('/articles');
-    } else if (user) {
+    } else if (user && canCreateArticles) {
       fetchMyArticles();
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, canCreateArticles, router]);
 
   const fetchMyArticles = async () => {
     setLoading(true);
@@ -109,7 +110,7 @@ export default function MyArticlesPage() {
     );
   }
 
-  if (!user) {
+  if (!user || !canCreateArticles) {
     return null; // Will redirect
   }
 
@@ -190,8 +191,8 @@ export default function MyArticlesPage() {
 
                           {/* Title */}
                           <h2 className="text-xl font-bold text-gray-900 mb-2">
-                            <Link 
-                              href={`/articles/${article.id}`}
+                            <Link
+                              href={`/articles/${createSlug(article.title)}`}
                               className="hover:text-green-600 transition-colors"
                             >
                               {article.title}
@@ -223,7 +224,7 @@ export default function MyArticlesPage() {
                         {/* Action Buttons */}
                         <div className="flex items-center gap-2 ml-4">
                           <Link
-                            href={`/articles/${article.id}/edit`}
+                            href={`/articles/${createSlug(article.title)}/edit`}
                             className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Edit article"
                           >

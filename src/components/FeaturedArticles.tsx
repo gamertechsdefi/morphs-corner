@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FiCalendar, FiUser, FiEye, FiHeart, FiArrowRight } from 'react-icons/fi';
 import Image from 'next/image';
 import Link from 'next/link';
+import { createSlug } from '@/data/articles';
 
 interface Article {
   id: string;
@@ -148,7 +149,7 @@ export default function FeaturedArticles() {
                 {/* Title */}
                 <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
                   <Link
-                    href={`/articles/${article.id}`}
+                    href={`/articles/${createSlug(article.title)}`}
                     className="hover:text-green-600 transition-colors"
                   >
                     {article.title}

@@ -8,6 +8,7 @@ import { FiSearch, FiFilter, FiCalendar, FiUser, FiEye, FiHeart, FiTag, FiChevro
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { createSlug } from '@/data/articles';
 
 interface Article {
   id: string;
@@ -34,7 +35,7 @@ interface PaginationInfo {
 // Articles content component that uses useSearchParams
 function ArticlesContent() {
   const searchParams = useSearchParams();
-  const { user } = useAuth();
+  const { canCreateArticles } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -172,7 +173,7 @@ function ArticlesContent() {
           <div className="text-center mb-12">
             <div className="flex items-center justify-between mb-6">
               <div></div>
-              {user && (
+              {canCreateArticles && (
                 <div className="flex items-center gap-3">
                   <Link
                     href="/articles/my-articles"
@@ -315,7 +316,7 @@ function ArticlesContent() {
                     {/* Title */}
                     <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
                       <Link
-                        href={`/articles/${article.id}`}
+                        href={`/articles/${createSlug(article.title)}`}
                         className="hover:text-green-600 transition-colors"
                       >
                         {article.title}

@@ -83,7 +83,7 @@ export default function Header() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { user } = useAuth();
+    const { user, canCreateArticles } = useAuth();
     const pathname = usePathname();
     const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -162,15 +162,15 @@ export default function Header() {
                         <span className="text-sm font-medium">Videos</span>
                     </Link>
 
-                    {/* Post Article button - only show for logged in users */}
-                    {user && (
+                    {/* Post Article button - only show for admin users */}
+                    {canCreateArticles && (
                         <Link
-                            href="/post-article"
+                            href="/articles/create"
                             className="flex items-center gap-2 px-3 py-2 hover:bg-green-700 rounded-full transition-colors text-white"
-                            aria-label="Post Article"
+                            aria-label="Create Article"
                         >
                             <FiEdit className="w-4 h-4 sm:w-5 sm:h-5" />
-                            <span className="text-sm font-medium">Post</span>
+                            <span className="text-sm font-medium">Create</span>
                         </Link>
                     )}
 
@@ -267,15 +267,15 @@ export default function Header() {
                                 <span className="font-medium">Videos</span>
                             </Link>
 
-                            {/* Post Article - only show for logged in users */}
-                            {user && (
+                            {/* Create Article - only show for admin users */}
+                            {canCreateArticles && (
                                 <Link
-                                    href="/post-article"
+                                    href="/articles/create"
                                     onClick={closeMobileMenu}
                                     className="flex items-center gap-3 px-3 py-3 hover:bg-green-700 rounded-lg transition-colors text-white"
                                 >
                                     <FiEdit className="w-5 h-5" />
-                                    <span className="font-medium">Post Article</span>
+                                    <span className="font-medium">Create Article</span>
                                 </Link>
                             )}
 

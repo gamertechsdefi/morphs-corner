@@ -8,6 +8,8 @@ import { FiArrowLeft, FiCalendar, FiUser, FiEye, FiHeart, FiTag, FiShare2, FiClo
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { getArticleById, getArticleByTitle, getArticleBySlug } from '@/data/articles';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 interface Article {
   id: string;
@@ -51,6 +53,50 @@ export default function ArticlePage() {
     setError(null);
 
     try {
+      // First, try to find the article in our local data
+      let localArticle = null;
+
+      // Try to find by slug first (most common case now)
+      localArticle = getArticleBySlug(id);
+
+      // If not found by slug, try by numeric ID (backward compatibility)
+      if (!localArticle) {
+        const numericId = parseInt(id);
+        if (!isNaN(numericId)) {
+          localArticle = getArticleById(numericId);
+        }
+      }
+
+      // If still not found, try by title (backward compatibility)
+      if (!localArticle) {
+        localArticle = getArticleByTitle(decodeURIComponent(id));
+      }
+
+      if (localArticle) {
+        // Convert local article format to expected format
+        const convertedArticle = {
+          id: localArticle.id.toString(),
+          title: localArticle.title,
+          content: localArticle.content,
+          html_content: localArticle.content, // Use content as HTML
+          category: localArticle.category,
+          tags: localArticle.tags,
+          featured_image_url: localArticle.imageUrl,
+          author_id: '1',
+          author_email: localArticle.author,
+          published_at: localArticle.date,
+          views_count: Math.floor(Math.random() * 1000) + 100, // Random views for demo
+          likes_count: localArticle.likes,
+          created_at: localArticle.date
+        };
+
+        setArticle(convertedArticle);
+        setLikesCount(localArticle.likes);
+        setLoading(false);
+        return;
+      }
+
+      // If not found locally, try API
       const response = await fetch(`/api/articles/${id}`);
       const data = await response.json();
 
@@ -233,14 +279,11 @@ export default function ArticlePage() {
               </div>
 
               {/* Article Content */}
-              <div className="prose prose-lg max-w-none mb-8">
-                {article.html_content ? (
-                  <div dangerouslySetInnerHTML={{ __html: article.html_content }} />
-                ) : (
-                  <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {article.content}
-                  </div>
-                )}
+              <div className="mb-8">
+                <MarkdownRenderer
+                  content={article.content}
+                  className="prose prose-lg max-w-none"
+                />
               </div>
 
               {/* Tags */}

@@ -11,6 +11,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   profileLoading: boolean;
+  isAdmin: boolean;
+  canCreateArticles: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -25,6 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [canCreateArticles, setCanCreateArticles] = useState(false);
 
 
   
@@ -74,6 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null);
           setProfileLoading(false);
+          setIsAdmin(false);
+          setCanCreateArticles(false);
         }
       }
     );
@@ -111,6 +117,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data) {
         setProfile(data);
+        // Set admin status based on role
+        const adminStatus = data.role === 'admin' || data.role === 'super_admin';
+        setIsAdmin(adminStatus);
+        setCanCreateArticles(adminStatus);
+      } else {
+        // Reset admin status if no profile
+        setIsAdmin(false);
+        setCanCreateArticles(false);
       }
     } catch (error) {
       if (error instanceof Error && error.message === 'Profile fetch timeout') {
@@ -159,6 +173,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: new Error(data.error || 'Sign in failed') };
       }
 
+      // Manually refresh the session to ensure immediate state update
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setSession(session);
+          setUser(session.user);
+          setProfileLoading(true);
+          await fetchProfile(session.user.id);
+          setProfileLoading(false);
+        }
+      } catch (sessionError) {
+        console.error('Error refreshing session after signin:', sessionError);
+      }
+
       return { error: null };
     } catch (error) {
       return { error: error instanceof Error ? error : new Error('Network error occurred') };
@@ -167,6 +195,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Clear local state immediately
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setIsAdmin(false);
+      setCanCreateArticles(false);
+
+      // Call the API to sign out
       await fetch('/api/auth/signout', {
         method: 'POST',
       });
@@ -207,6 +243,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session,
     loading,
     profileLoading,
+    isAdmin,
+    canCreateArticles,
     signUp,
     signIn,
     signOut,

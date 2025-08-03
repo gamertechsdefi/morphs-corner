@@ -7,6 +7,7 @@ import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import Footer from "@/components/Footer";
 import FeaturedVideos from "@/components/FeaturedVideos";
 import Link from 'next/link';
+import { getTrendingArticles, getOnboardingArticles, createSlug } from '@/data/articles';
 
 interface FeaturedArticle {
   id: number;
@@ -20,6 +21,12 @@ interface FeaturedArticle {
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [trendingFilter, setTrendingFilter] = useState('All');
+  const [onboardingFilter, setOnboardingFilter] = useState('All');
+
+  // Get articles from data
+  const trendingArticles = getTrendingArticles();
+  const onboardingArticles = getOnboardingArticles();
 
   // Sample tweets data
   const tweetsData = [
@@ -283,22 +290,64 @@ export default function Home() {
 
               {/* Filter Tabs */}
               <div className="flex gap-3 overflow-x-auto pb-2">
-                <button className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap">
+                <button
+                  onClick={() => setTrendingFilter('All')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'All'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   All
                 </button>
-                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={() => setTrendingFilter('News')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'News'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   News
                 </button>
-                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={() => setTrendingFilter('Analysis')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'Analysis'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   Analysis
                 </button>
-                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={() => setTrendingFilter('Guides')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'Guides'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   Guides
                 </button>
-                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={() => setTrendingFilter('Beginner')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'Beginner'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   Beginner
                 </button>
-                <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={() => setTrendingFilter('Advanced')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    trendingFilter === 'Advanced'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
                   Advanced
                 </button>
               </div>
@@ -308,68 +357,166 @@ export default function Home() {
             <div className="flex-1 flex items-center">
               <div className="w-full overflow-x-auto scrollbar-hide">
                 <div className="flex gap-8 pb-6 min-w-max">
-                  {/* Article Card 1 */}
-                  <div className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div className="relative h-80 bg-gradient-to-br from-gray-900 to-green-900">
-                      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                    </div>
-                    <div className="p-4">
-                      <div className="mb-4">
-                        <div className="text-xs font-medium mb-2 text-gray-600">ARTICLE • GUIDES • LATEST • BEGINNER • TRENDING</div>
-                        <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">Start Here: The Only Spot Trading Tips You Need In 2025.</h3>
+                  {trendingArticles.map((article) => (
+                    <div key={article.id} className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                      <div className="relative h-80 bg-gradient-to-br from-gray-900 to-green-900">
+                        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-white text-center p-6">
+                            <div className="text-4xl mb-4">🔥</div>
+                            <h3 className="text-xl font-bold">{article.difficulty}</h3>
+                            <p className="text-sm opacity-80">{article.readTime} min read</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Friday, May 9, 2025</span>
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
-                            </svg>
-                            3
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                            0
-                          </span>
+                      <div className="p-4">
+                        <div className="mb-4">
+                          <div className="text-xs font-medium mb-2 text-gray-600">
+                            {article.category} • {article.tags.slice(0, 2).join(' • ')} • TRENDING
+                          </div>
+                          <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">
+                            <Link href={`/articles/${createSlug(article.title)}`} className="hover:text-green-600 transition-colors">
+                              {article.title}
+                            </Link>
+                          </h3>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>{article.date}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
+                              </svg>
+                              {article.comments}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                              {article.likes}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                  {/* Article Card 2 */}
-                  <div className="flex-shrink-0 w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div className="relative h-80 bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center">
-                      <div className="text-6xl font-bold text-white opacity-20">CBEX</div>
-                    </div>
-                    <div className="p-4">
-                      <div className="mb-4">
-                        <div className="text-xs font-medium mb-2 text-gray-600">TRENDING • ARTICLE</div>
-                        <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">The CBEX Scam in Nigeria: What Happened, Why It Matters, and How...</h3>
+        {/* Onboarding Section */}
+        <section className="bg-gray-50 min-h-screen py-12 px-4 lg:px-8 flex flex-col">
+          <div className="w-full flex-1 flex flex-col">
+            {/* Section Header */}
+            <div className="mb-8">
+              <h2 className="text-4xl font-bold text-gray-900 mb-8">ONBOARDING</h2>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                <button
+                  onClick={() => setOnboardingFilter('All')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'All'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Beginner')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Beginner'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Beginner
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Wallets')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Wallets'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Wallets
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('DeFi')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'DeFi'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  DeFi
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Security')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Security'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Security
+                </button>
+              </div>
+            </div>
+
+            {/* Horizontal Scrollable Cards Container */}
+            <div className="flex-1 flex items-center">
+              <div className="w-full overflow-x-auto scrollbar-hide">
+                <div className="flex gap-8 pb-6 min-w-max">
+                  {onboardingArticles.map((article) => (
+                    <div key={article.id} className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                      <div className="relative h-80 bg-gradient-to-br from-blue-600 to-purple-800">
+                        <div className="absolute inset-0 bg-black bg-opacity-40">
+                          <Image src={article.imageUrl} alt='image' width={500} height={200} className='w-full h-full' />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-white text-center p-6">
+                            <div className="text-4xl mb-4">📚</div>
+                            <h3 className="text-xl font-bold">{article.difficulty}</h3>
+                            <p className="text-sm opacity-80">{article.readTime} min read</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>Sunday, Apr 27, 2025</span>
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
-                            </svg>
-                            2
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                            1
-                          </span>
+                      <div className="p-4">
+                        <div className="mb-4">
+                          <div className="text-xs font-medium mb-2 text-gray-600">
+                            {article.category} • {article.tags.slice(0, 2).join(' • ')} • ONBOARDING
+                          </div>
+                          <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">
+                            <Link href={`/articles/${createSlug(article.title)}`} className="hover:text-blue-600 transition-colors">
+                              {article.title}
+                            </Link>
+                          </h3>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>{article.date}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
+                              </svg>
+                              {article.comments}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                              {article.likes}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* More article cards would continue here... */}
-
+                  ))}
                 </div>
               </div>
             </div>
