@@ -308,7 +308,7 @@ export default function Home() {
                         <div key={article.id} className="py-4 flex items-start gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
                           <div className="flex-shrink-0 w-12 h-12 rounded bg-gray-100 overflow-hidden flex items-center justify-center">
                             {article.featured_image_url ? (
-                              <img src={article.featured_image_url} alt={article.title} className="w-full h-full object-cover rounded" />
+                              <Image src={article.featured_image_url} width={200} height={200} alt={article.title} className="w-full h-full object-cover rounded" />
                             ) : (
                               <div className="w-full h-full bg-gray-200" />
                             )}

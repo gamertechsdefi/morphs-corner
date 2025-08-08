@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { FiArrowLeft, FiImage, FiX, FiSave, FiTag, FiEye, FiEdit3, FiUpload } from 'react-icons/fi';
+import { FiArrowLeft, FiX, FiSave, FiTag, FiEye, FiEdit3, FiUpload } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
@@ -90,10 +90,10 @@ export default function CreateArticlePage() {
     }
   };
 
-  const removeImage = () => {
-    setFeaturedImage(null);
-    setImagePreview(null);
-  };
+  // const removeImage = () => {
+  //   setFeaturedImage(null);
+  //   setImagePreview(null);
+  // };
 
 
 
@@ -411,7 +411,7 @@ export default function CreateArticlePage() {
                       const alt = prompt('Enter alt text for the image:') || 'Image';
                       setContent(prev => {
                         const textarea = document.activeElement as HTMLTextAreaElement;
-                        let insertPos = textarea?.selectionStart ?? prev.length;
+                        const insertPos = textarea?.selectionStart ?? prev.length;
                         return prev.slice(0, insertPos) + `![${alt}](${url})\n` + prev.slice(insertPos);
                       });
                     }

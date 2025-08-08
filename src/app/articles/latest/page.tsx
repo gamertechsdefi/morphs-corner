@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 
 import { SupabaseArticle } from '@/types/article';
 
@@ -102,9 +103,10 @@ export default function LatestArticlesPage() {
                     <div className="flex flex-col md:flex-row">
                       {article.imageUrl && (
                         <div className="md:w-72 flex-shrink-0">
-                          <img
+                          <Image
                             src={article.imageUrl}
                             alt={article.title || "Article image"}
+                            width={200} height={200}
                             className="h-48 md:h-full w-full object-cover"
                           />
                         </div>

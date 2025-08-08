@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
-import MarkdownRenderer from '@/components/MarkdownRenderer';
+// import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { createClient } from '@supabase/supabase-js';
 
 type SupabaseArticle = {
@@ -30,7 +30,7 @@ type SupabaseArticle = {
 };
 
 import { useParams } from 'next/navigation';
-import XPost from '@/components/XPost';
+// import XPost from '@/components/XPost';
 
 export default function LatestArticlePage() {
   const [article, setArticle] = useState<SupabaseArticle | null>(null);
@@ -53,7 +53,7 @@ export default function LatestArticlePage() {
         slugStr = params.slug.join('-');
       }
       // Query by slug field for robust matching
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('articles')
         .select('*')
         .eq('status', 'published')

@@ -49,7 +49,7 @@ export default function ArticlePage() {
       } else if (Array.isArray(params.slug)) {
         slugStr = params.slug.join('-');
       }
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('articles')
         .select('*')
         .eq('status', 'published')
