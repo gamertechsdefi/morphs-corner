@@ -4,7 +4,7 @@ interface TwitterWidgets {
     createTweet: (
       tweetId: string,
       targetEl: HTMLElement,
-      options?: Record<string, any>
+      options?: Record<string, unknown>
     ) => Promise<void>;
   };
 }
@@ -17,7 +17,7 @@ declare global {
       createTweet: (
         tweetId: string,
         targetEl: HTMLElement,
-        options?: Record<string, any>
+        options?: Record<string, unknown>
       ) => Promise<void>;
     };
   }
