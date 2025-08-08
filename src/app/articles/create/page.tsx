@@ -12,6 +12,8 @@ import RichTextEditor from '@/components/RichTextEditor';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 export default function CreateArticlePage() {
+  // Content type state
+  const [contentType, setContentType] = useState<'featured' | 'latest' | 'article'>('article');
   const router = useRouter();
   const { user, loading: authLoading, canCreateArticles } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -112,7 +114,7 @@ export default function CreateArticlePage() {
       formData.append('content', content.trim());
       formData.append('category', category);
       formData.append('tags', JSON.stringify(tags));
-      
+      formData.append('contentType', contentType);
       if (featuredImage) {
         formData.append('featuredImage', featuredImage);
       }
@@ -181,14 +183,21 @@ export default function CreateArticlePage() {
       
       <main className="px-4 lg:px-8 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Back Button */}
-          <div className="mb-6">
+          {/* Back Button & Latest Articles Link */}
+          <div className="mb-6 flex flex-col md:flex-row gap-2 md:gap-6 items-start md:items-center">
             <Link
               href="/articles"
               className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium"
             >
               <FiArrowLeft className="w-4 h-4" />
               Back to Articles
+            </Link>
+            <Link
+              href="/articles/latest"
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+            >
+              <FiEye className="w-4 h-4" />
+              View Latest News & Articles
             </Link>
           </div>
 
@@ -260,6 +269,23 @@ export default function CreateArticlePage() {
           ) : (
             /* Edit Mode */
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+              {/* Content Type Selector */}
+              <div className="mb-6">
+                <label htmlFor="contentType" className="block text-sm font-medium text-gray-700 mb-2">
+                  Content Type *
+                </label>
+                <select
+                  id="contentType"
+                  value={contentType}
+                  onChange={e => setContentType(e.target.value as 'featured' | 'latest' | 'article')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="featured">Featured</option>
+                  <option value="latest">Latest</option>
+                  <option value="article">Article</option>
+                </select>
+              </div>
               {/* Title */}
               <div className="mb-6">
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -375,6 +401,24 @@ export default function CreateArticlePage() {
                     </label>
                   </div>
                 )}
+                {/* Insert Image into Content Button */}
+                <button
+                  type="button"
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={() => {
+                    const url = prompt('Enter image URL to insert into content:');
+                    if (url) {
+                      const alt = prompt('Enter alt text for the image:') || 'Image';
+                      setContent(prev => {
+                        const textarea = document.activeElement as HTMLTextAreaElement;
+                        let insertPos = textarea?.selectionStart ?? prev.length;
+                        return prev.slice(0, insertPos) + `![${alt}](${url})\n` + prev.slice(insertPos);
+                      });
+                    }
+                  }}
+                >
+                  Insert Image into Content
+                </button>
               </div>
 
               {/* Tags */}
@@ -438,103 +482,6 @@ export default function CreateArticlePage() {
                   className="min-h-[500px]"
                 />
               </div>
-
-            {/* Featured Image */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Featured Image
-              </label>
-              
-              {imagePreview ? (
-                <div className="relative">
-                  <div className="relative h-48 rounded-lg overflow-hidden">
-                    <Image
-                      src={imagePreview}
-                      alt="Preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                  >
-                    <FiX className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                  <FiImage className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-2">Upload a featured image</p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
-                  >
-                    Choose Image
-                  </label>
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="mb-6">
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                Content *
-              </label>
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Write your article content..."
-                rows={12}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"
-                required
-              />
-            </div>
-
-            {/* Tags */}
-            <div className="mb-8">
-              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
-              <input
-                type="text"
-                id="tags"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={addTag}
-                placeholder="Type a tag and press Enter..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-              
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-                    >
-                      #{tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(index)}
-                        className="text-green-600 hover:text-green-800"
-                      >
-                        <FiX className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Submit Button */}
             <div className="flex items-center justify-end gap-4">

@@ -9,6 +9,27 @@ import FeaturedVideos from "@/components/FeaturedVideos";
 import Link from 'next/link';
 import { getTrendingArticles, getOnboardingArticles, createSlug } from '@/data/articles';
 
+type SupabaseArticle = {
+  id: string;
+  title?: string;
+  description?: string;
+  author?: string;
+  date?: string;
+  featured_image_url?: string;
+  category?: string;
+  tags?: string[];
+  readTime?: number;
+  featured?: boolean;
+  trending?: boolean;
+  onboarding?: boolean;
+  difficulty?: string;
+  likes?: number;
+  comments?: number;
+  content_type?: string;
+  status?: string;
+};
+import { createClient } from '@supabase/supabase-js';
+
 interface FeaturedArticle {
   id: number;
   title: string;
@@ -112,36 +133,36 @@ export default function Home() {
     }
   ];
 
-  // Sample featured articles data
-  const featuredArticles: FeaturedArticle[] = [
-    {
-      id: 1,
-      title: "How To Make Money Online With Crypto Airdrops.",
-      description: "Discover the latest strategies for earning cryptocurrency through airdrops and maximize your passive income potential.",
-      author: "Udemezue John",
-      date: "Saturday, May 17, 2025",
-      imageUrl: "/api/placeholder/600/400",
-      category: "ARTICLE"
-    },
-    {
-      id: 2,
-      title: "The Future of DeFi: What You Need to Know",
-      description: "Explore the evolving landscape of decentralized finance and its impact on traditional banking systems.",
-      author: "Sarah Johnson",
-      date: "Friday, May 16, 2025",
-      imageUrl: "/api/placeholder/600/400",
-      category: "GUIDE"
-    },
-    {
-      id: 3,
-      title: "NFT Market Trends: 2025 Analysis",
-      description: "Comprehensive analysis of the NFT market trends and predictions for the upcoming year.",
-      author: "Mike Chen",
-      date: "Thursday, May 15, 2025",
-      imageUrl: "/api/placeholder/600/400",
-      category: "ANALYSIS"
+  // Supabase client
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+
+  const [featuredArticles, setFeaturedArticles] = useState<SupabaseArticle[]>([]);
+  const [latestArticles, setLatestArticles] = useState<SupabaseArticle[]>([]);
+
+  useEffect(() => {
+    async function fetchArticles() {
+      // Featured
+      const { data: featured, error: featuredError } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('content_type', 'featured')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(5);
+      if (!featuredError) setFeaturedArticles(featured || []);
+
+      // Latest
+      const { data: latest, error: latestError } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('content_type', 'latest')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(10);
+      if (!latestError) setLatestArticles(latest || []);
     }
-  ];
+    fetchArticles();
+  }, []);
 
   // Auto-slide functionality
   useEffect(() => {
@@ -164,7 +185,7 @@ export default function Home() {
     setCurrentSlide((prev) => (prev - 1 + featuredArticles.length) % featuredArticles.length);
   };
 
-  const currentArticle = featuredArticles[currentSlide];
+  const currentArticle: SupabaseArticle | null = featuredArticles && featuredArticles.length > 0 ? featuredArticles[currentSlide] : null;
 
   return (
     <div>
@@ -178,50 +199,65 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left Section - Featured Article */}
               <div className="lg:col-span-2">
-                <div className="relative bg-black rounded-lg overflow-hidden h-96 md:h-[500px]">
-                  {/* Background Image */}
-                  <div className="absolute inset-0">
-                    <div className="w-full h-full bg-gradient-to-r from-purple-900 via-green-900 to-green-900 opacity-80"></div>
-                    {/* Placeholder for actual image */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-32 h-32 bg-yellow-400 rounded-full opacity-20"></div>
-                      <div className="absolute w-24 h-24 bg-purple-500 rounded-full top-20 right-20 opacity-30"></div>
-                      <div className="absolute w-16 h-16 bg-green-400 rounded-full bottom-20 left-20 opacity-25"></div>
+                <div className="relative rounded-lg overflow-hidden h-96 md:h-[500px]">
+                  {/* Background Image or Placeholder */}
+                  {currentArticle?.featured_image_url ? (
+                    <Image
+                      src={currentArticle.featured_image_url}
+                      alt={currentArticle.title || 'Featured Article'}
+                      fill
+                      className="object-cover absolute inset-0 z-0"
+                      priority
+                    />
+                  ) : (
+                    <div className="absolute inset-0">
+                      <div className="w-full h-full bg-gradient-to-r from-purple-900 via-green-900 to-green-900 opacity-80"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-32 h-32 bg-yellow-400 rounded-full opacity-20"></div>
+                        <div className="absolute w-24 h-24 bg-purple-500 rounded-full top-20 right-20 opacity-30"></div>
+                        <div className="absolute w-16 h-16 bg-green-400 rounded-full bottom-20 left-20 opacity-25"></div>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Content Overlay */}
-                  <div className="relative z-10 p-6 md:p-8 h-full flex flex-col justify-between">
+                  <div className="relative z-10 p-6 md:p-8 h-full flex flex-col justify-between bg-gradient-to-t from-black/80 via-black/60 to-transparent">
                     {/* Category Badge */}
                     <div className="flex items-start">
                       <span className="bg-white text-black px-3 py-1 rounded text-sm font-medium">
-                        {currentArticle.category}
+                        {currentArticle?.category || currentArticle?.content_type || 'No Category'}
                       </span>
                     </div>
 
                     {/* Article Content */}
                     <div className="text-white">
                       <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                        {currentArticle.title}
+                        {currentArticle?.title || 'No Article Available'}
                       </h1>
 
                       <p className="text-gray-300 mb-6 text-sm md:text-base max-w-2xl">
-                        {currentArticle.description}
+                        {currentArticle?.description || ''}
                       </p>
 
                       {/* Author and Date */}
                       <div className="flex items-center gap-4 mb-6">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-gray-400 rounded-full"></div>
-                          <span className="text-sm">{currentArticle.author}</span>
+                          <div className="w-8 h-8 bg-gray-400 rounded-full overflow-hidden">
+                            {currentArticle?.featured_image_url ? (
+                              <Image src={currentArticle.featured_image_url} alt={currentArticle.author || ''} width={32} height={32} className="rounded-full object-cover" />
+                            ) : null}
+                          </div>
+                          <span className="text-sm">{currentArticle?.author || ''}</span>
                         </div>
-                        <span className="text-gray-400 text-sm">{currentArticle.date}</span>
+                        <span className="text-gray-400 text-sm">{currentArticle?.date || ''}</span>
                       </div>
 
                       {/* Read Article Button */}
-                      <button className="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-200 transition-colors">
-                        Read Article
-                      </button>
+                      <Link href={currentArticle?.title ? `/articles/${createSlug(currentArticle.title)}` : '#'}>
+                        <button className="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-200 transition-colors">
+                          Read Article
+                        </button>
+                      </Link>
                     </div>
 
                     {/* Navigation */}
@@ -262,19 +298,152 @@ export default function Home() {
 
               {/* Right Section - Latest News */}
               <div className="lg:col-span-1">
-                <div className="bg-white rounded-lg p-6 h-96 md:h-[500px] overflow-hidden">
+                <div className="bg-white rounded-lg p-6 h-96 md:h-[500px] overflow-hidden flex flex-col">
                   <h2 className="text-xl font-bold mb-6 text-gray-800">LATEST</h2>
-
-                  {/* CryptoPanic Widget */}
-                  <div className="h-full">
-                    <iframe
-                      src="https://cryptopanic.com/widgets/news/?bg_color=FFFFFF&currencies=BTC%2CETH%2CLTC%2CXRP&font_color=333333&header_bg_color=30343B&header_font_color=FFFFFF&link_font_color=0091C2&news_feed=recent&title=Latest%20Crypto%20News"
-                      width="100%"
-                      height="100%"
-                      className="rounded border-0"
-                      title="CryptoPanic News Widget"
-                    />
+                  <div className="flex-1 overflow-y-auto scrollbar-hide divide-y divide-gray-100">
+                    {latestArticles.length === 0 ? (
+                      <div className="text-gray-400 text-center py-12">No latest articles found.</div>
+                    ) : (
+                      latestArticles.map(article => (
+                        <div key={article.id} className="py-4 flex items-start gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
+                          <div className="flex-shrink-0 w-12 h-12 rounded bg-gray-100 overflow-hidden flex items-center justify-center">
+                            {article.featured_image_url ? (
+                              <img src={article.featured_image_url} alt={article.title} className="w-full h-full object-cover rounded" />
+                            ) : (
+                              <div className="w-full h-full bg-gray-200" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <Link href={`/articles/latest/${createSlug(article.title ?? '')}`} className="block font-semibold text-gray-900 leading-tight hover:text-green-600 truncate">
+                              {article.title}
+                            </Link>
+                            <div className="text-xs text-gray-500 mt-1 truncate">{article.description}</div>
+                            <div className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                              <span>{article.author}</span>
+                              <span>•</span>
+                              <span>{article.date}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+                {/* Onboarding Section */}
+        <section className="bg-gray-50 min-h-screen py-12 px-4 lg:px-8 flex flex-col">
+          <div className="w-full flex-1 flex flex-col">
+            {/* Section Header */}
+            <div className="mb-8">
+              <h2 className="text-4xl font-bold text-gray-900 mb-8">ONBOARDING</h2>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                <button
+                  onClick={() => setOnboardingFilter('All')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'All'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Beginner')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Beginner'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Beginner
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Wallets')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Wallets'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Wallets
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('DeFi')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'DeFi'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  DeFi
+                </button>
+                <button
+                  onClick={() => setOnboardingFilter('Security')}
+                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    onboardingFilter === 'Security'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Security
+                </button>
+              </div>
+            </div>
+
+            {/* Horizontal Scrollable Cards Container */}
+            <div className="flex-1 flex items-center">
+              <div className="w-full overflow-x-auto scrollbar-hide">
+                <div className="flex gap-8 pb-6 min-w-max">
+                  {onboardingArticles.map((article) => (
+                    <div key={article.id} className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                      <div className="relative h-80 bg-gradient-to-br from-blue-600 to-purple-800">
+                        <div className="absolute inset-0 bg-black bg-opacity-40">
+                          <Image src={article.imageUrl} alt='image' width={500} height={200} className='w-full h-full' />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-white text-center p-6">
+                            <h3 className="text-xl font-bold">{article.difficulty}</h3>
+                            <p className="text-sm opacity-80">{article.readTime} min read</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <div className="mb-4">
+                          <div className="text-xs font-medium mb-2 text-gray-600">
+                            {article.category} • {article.tags.slice(0, 2).join(' • ')} • ONBOARDING
+                          </div>
+                          <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">
+                            <Link href={`/articles/${createSlug(article.title)}`} className="hover:text-blue-600 transition-colors">
+                              {article.title}
+                            </Link>
+                          </h3>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span>{article.date}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
+                              </svg>
+                              {article.comments}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                              {article.likes}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -401,121 +570,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Onboarding Section */}
-        <section className="bg-gray-50 min-h-screen py-12 px-4 lg:px-8 flex flex-col">
-          <div className="w-full flex-1 flex flex-col">
-            {/* Section Header */}
-            <div className="mb-8">
-              <h2 className="text-4xl font-bold text-gray-900 mb-8">ONBOARDING</h2>
 
-              {/* Filter Tabs */}
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                <button
-                  onClick={() => setOnboardingFilter('All')}
-                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    onboardingFilter === 'All'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setOnboardingFilter('Beginner')}
-                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    onboardingFilter === 'Beginner'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Beginner
-                </button>
-                <button
-                  onClick={() => setOnboardingFilter('Wallets')}
-                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    onboardingFilter === 'Wallets'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Wallets
-                </button>
-                <button
-                  onClick={() => setOnboardingFilter('DeFi')}
-                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    onboardingFilter === 'DeFi'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  DeFi
-                </button>
-                <button
-                  onClick={() => setOnboardingFilter('Security')}
-                  className={`px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    onboardingFilter === 'Security'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Security
-                </button>
-              </div>
-            </div>
-
-            {/* Horizontal Scrollable Cards Container */}
-            <div className="flex-1 flex items-center">
-              <div className="w-full overflow-x-auto scrollbar-hide">
-                <div className="flex gap-8 pb-6 min-w-max">
-                  {onboardingArticles.map((article) => (
-                    <div key={article.id} className="flex-shrink-0 w-80 sm:w-96 h-[500px] bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                      <div className="relative h-80 bg-gradient-to-br from-blue-600 to-purple-800">
-                        <div className="absolute inset-0 bg-black bg-opacity-40">
-                          <Image src={article.imageUrl} alt='image' width={500} height={200} className='w-full h-full' />
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-white text-center p-6">
-                            <h3 className="text-xl font-bold">{article.difficulty}</h3>
-                            <p className="text-sm opacity-80">{article.readTime} min read</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="mb-4">
-                          <div className="text-xs font-medium mb-2 text-gray-600">
-                            {article.category} • {article.tags.slice(0, 2).join(' • ')} • ONBOARDING
-                          </div>
-                          <h3 className="text-lg font-bold leading-tight text-gray-900 mb-2">
-                            <Link href={`/articles/${createSlug(article.title)}`} className="hover:text-blue-600 transition-colors">
-                              {article.title}
-                            </Link>
-                          </h3>
-                        </div>
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <span>{article.date}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.001 8.001 0 01-7.716-6M3 12c0-4.418 3.582-8 8-8a8.001 8.001 0 017.716 6" />
-                              </svg>
-                              {article.comments}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                              </svg>
-                              {article.likes}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Tweets Section */}
         <section className="bg-gray-50 py-12 px-4 lg:px-8">

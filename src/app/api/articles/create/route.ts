@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     const category = formData.get('category') as string;
     const tagsString = formData.get('tags') as string;
     const featuredImage = formData.get('featuredImage') as File | null;
+    const contentType = formData.get('contentType') as string | null;
     
     // Parse tags
     let tags: string[] = [];
@@ -101,7 +102,8 @@ export async function POST(request: NextRequest) {
           author_id: session.user.id,
           author_email: session.user.email,
           published_at: new Date().toISOString(),
-          status: 'published'
+          status: 'published',
+          content_type: contentType || 'article',
         })
         .select()
         .single();
@@ -123,7 +125,8 @@ export async function POST(request: NextRequest) {
           author_id: session.user.id,
           author_email: session.user.email,
           published_at: new Date().toISOString(),
-          status: 'published'
+          status: 'published',
+          content_type: contentType || 'article',
         })
         .select()
         .single();

@@ -732,6 +732,10 @@ export const getArticleBySlug = (slug: string) => {
 
 // Helper functions to filter articles
 export const getFeaturedArticles = () => articlesData.filter(article => article.featured);
+export const getLatestArticles = () => {
+  // Example: latest = not featured, not onboarding, not trending
+  return articlesData.filter(article => !article.featured && !article.onboarding && !article.trending);
+};
 export const getTrendingArticles = () => articlesData.filter(article => article.trending);
 export const getOnboardingArticles = () => articlesData.filter(article => article.onboarding);
 export const getArticleByTitle = (title: string) => articlesData.find(article => article.title === title);

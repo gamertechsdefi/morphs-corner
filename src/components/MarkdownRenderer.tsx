@@ -1,11 +1,28 @@
 'use client';
 
+import { useEffect } from 'react';
+
 interface MarkdownRendererProps {
   content: string;
   className?: string;
 }
 
 export default function MarkdownRenderer({ content, className = '' }: MarkdownRendererProps) {
+  // Effect to handle Twitter embeds
+  useEffect(() => {
+    // Load Twitter widgets
+    if (content.includes('twitter-tweet') || content.includes('twitter-embed')) {
+      const script = document.createElement('script');
+      script.src = 'https://platform.twitter.com/widgets.js';
+      script.async = true;
+      script.charset = 'utf-8';
+      document.body.appendChild(script);
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, [content]);
+
   // Simple markdown to HTML converter
   const convertMarkdownToHTML = (markdown: string): string => {
     let html = markdown;
@@ -47,7 +64,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     html = html.replace(/^(?!<[h|u|o|l|p|d])(.*$)/gim, '<p class="mb-4 text-black leading-relaxed">$1</p>');
 
     // Line breaks
-    html = html.replace(/\n\n/g, '</p><p class="mb-4 text-black leading-relaxed">');
+    html = html.replace(/\n\n/g, '<\/p><p class="mb-4 text-black leading-relaxed">');
 
     // Clean up empty paragraphs
     html = html.replace(/<p class="mb-4 text-black leading-relaxed"><\/p>/g, '');
@@ -55,24 +72,62 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     // Tables (basic support)
     html = html.replace(/\|(.+)\|/g, (match, content) => {
       const cells = content.split('|').map((cell: string) => cell.trim());
-      const cellsHtml = cells.map((cell: string) => `<td class="border border-black px-4 py-2 text-black">${cell}</td>`).join('');
-      return `<tr>${cellsHtml}</tr>`;
+      const cellsHtml = cells.map((cell: string) => `<td class="border border-black px-4 py-2 text-black">${cell}<\/td>`).join('');
+      return `<tr>${cellsHtml}<\/tr>`;
     });
 
     // Wrap tables
-    html = html.replace(/(<tr>.*<\/tr>)/g, '<table class="w-full border-collapse border border-black my-4">$1</table>');
+    html = html.replace(/(<tr>.*<\/tr>)/g, '<table class="w-full border-collapse border border-black my-4">$1<\/table>');
 
     // Enhanced Blockquotes with note types
-    html = html.replace(/^> 💡 \*\*INFO:\*\* (.*$)/gim, '<div class="border-l-4 border-blue-500 bg-blue-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-blue-600 text-lg">💡</span><div><strong class="text-blue-800">INFO:</strong> <span class="text-blue-700">$1</span></div></div></div>');
-    html = html.replace(/^> ⚠️ \*\*WARNING:\*\* (.*$)/gim, '<div class="border-l-4 border-yellow-500 bg-yellow-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-yellow-600 text-lg">⚠️</span><div><strong class="text-yellow-800">WARNING:</strong> <span class="text-yellow-700">$1</span></div></div></div>');
-    html = html.replace(/^> ✅ \*\*SUCCESS:\*\* (.*$)/gim, '<div class="border-l-4 border-green-500 bg-green-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-green-600 text-lg">✅</span><div><strong class="text-green-800">SUCCESS:</strong> <span class="text-green-700">$1</span></div></div></div>');
-    html = html.replace(/^> ❌ \*\*ERROR:\*\* (.*$)/gim, '<div class="border-l-4 border-red-500 bg-red-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-red-600 text-lg">❌</span><div><strong class="text-red-800">ERROR:</strong> <span class="text-red-700">$1</span></div></div></div>');
+    html = html.replace(/^> 💡 \*\*INFO:\*\* (.*$)/gim, '<div class="border-l-4 border-blue-500 bg-blue-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-blue-600 text-lg">💡<\/span><div><strong class="text-blue-800">INFO:<\/strong> <span class="text-blue-700">$1<\/span><\/div><\/div><\/div>');
+    html = html.replace(/^> ⚠️ \*\*WARNING:\*\* (.*$)/gim, '<div class="border-l-4 border-yellow-500 bg-yellow-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-yellow-600 text-lg">⚠️<\/span><div><strong class="text-yellow-800">WARNING:<\/strong> <span class="text-yellow-700">$1<\/span><\/div><\/div><\/div>');
+    html = html.replace(/^> ✅ \*\*SUCCESS:\*\* (.*$)/gim, '<div class="border-l-4 border-green-500 bg-green-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-green-600 text-lg">✅<\/span><div><strong class="text-green-800">SUCCESS:<\/strong> <span class="text-green-700">$1<\/span><\/div><\/div><\/div>');
+    html = html.replace(/^> ❌ \*\*ERROR:\*\* (.*$)/gim, '<div class="border-l-4 border-red-500 bg-red-50 p-4 my-4 rounded-r-lg"><div class="flex items-start gap-2"><span class="text-red-600 text-lg">❌<\/span><div><strong class="text-red-800">ERROR:<\/strong> <span class="text-red-700">$1<\/span><\/div><\/div><\/div>');
+
+    // Preserve embedded tweets and other HTML content
+    const preservedBlocks: string[] = [];
+    html = html.replace(/(<blockquote class="twitter-tweet">[\s\S]*?<\/blockquote>|<div data-tweet-content[\s\S]*?<\/div>)/g, (match) => {
+      const id = `PRESERVED_BLOCK_${preservedBlocks.length}`;
+      preservedBlocks.push(match);
+      return id;
+    });
 
     // Regular blockquotes
-    html = html.replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-black pl-4 py-2 my-4 bg-black bg-opacity-5 italic text-black">$1</blockquote>');
+    html = html.replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-black pl-4 py-2 my-4 bg-black bg-opacity-5 italic text-black">$1<\/blockquote>');
+
+    // Restore preserved blocks
+    preservedBlocks.forEach((block, index) => {
+      html = html.replace(`PRESERVED_BLOCK_${index}`, block);
+    });
 
     // Video containers (preserve HTML)
-    html = html.replace(/<div class="video-container my-6">([\s\S]*?)<\/div>/g, '<div class="video-container my-6 bg-black bg-opacity-5 rounded-lg overflow-hidden">$1</div>');
+    html = html.replace(/<div class="video-container my-6">([\s\S]*?)<\/div>/g, '<div class="video-container my-6 bg-black bg-opacity-5 rounded-lg overflow-hidden">$1<\/div>');
+
+    // Enhanced image handling with loading="lazy" and advanced features
+    html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)/g, (match, alt, src, title) => {
+      // Support both URLs and local images
+      const imgSrc = /^(https?:\/\/|data:image)/.test(src) ? src : src.startsWith('/') ? src : `/images/${src}`;
+      
+      // Generate a unique ID for the image wrapper
+      const imageId = `img-${Math.random().toString(36).substr(2, 9)}`;
+      
+      return `
+        <div class="image-wrapper my-4 relative group" id="${imageId}">
+          <img
+            src="${imgSrc}"
+            alt="${alt}"
+            title="${title || alt}"
+            class="rounded-lg shadow-md max-w-full h-auto transition-all duration-200 hover:scale-[1.02]"
+            loading="lazy"
+            onload="this.classList.add('loaded')"
+            onerror="this.parentElement.classList.add('error')"
+          />
+          <div class="image-overlay absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200"></div>
+          <div class="image-caption text-sm text-gray-500 mt-2">${alt}</div>
+        </div>
+      `;
+    });
 
     return html;
   };
@@ -80,9 +135,29 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
   const htmlContent = convertMarkdownToHTML(content);
 
   return (
-    <div 
-      className={`prose prose-lg max-w-none ${className}`}
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
+    <>
+      <div 
+        className={`prose prose-lg max-w-none ${className}`}
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        style={{
+          '--tw-prose-pre-bg': 'transparent',
+        } as React.CSSProperties}
+      />
+      <style jsx global>{`
+        .twitter-tweet {
+          margin: 2rem auto !important;
+        }
+        .tweet-embed {
+          display: flex;
+          justify-content: center;
+          margin: 2rem 0;
+        }
+        .twitter-embed {
+          min-width: 300px;
+          max-width: 550px;
+          margin: 0 auto;
+        }
+      `}</style>
+    </>
   );
 }

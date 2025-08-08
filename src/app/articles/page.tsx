@@ -95,6 +95,9 @@ function ArticlesContent() {
         params.append('search', search);
       }
 
+      // Only fetch articles with content_type = 'article'
+      params.append('content_type', 'article');
+
       const response = await fetch(`/api/articles?${params}`);
       const data = await response.json();
 
